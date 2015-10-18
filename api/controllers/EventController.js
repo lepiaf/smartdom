@@ -6,6 +6,10 @@
  */
 
 module.exports = {
-	
+    list: function (req, res) {
+        Event.find({subType: "V_TEMP"}).exec(function(err, data){
+            return res.json(data);
+        });
+    }
 };
 

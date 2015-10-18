@@ -34,7 +34,9 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
+  'GET /api/v1/events': 'EventController.list'
+
 
   /***************************************************************************
   *                                                                          *
