@@ -21,6 +21,7 @@
     "angular-route": "~1.4.7",
     "bootstrap": "~3.3.5",
     "angular-chart.js": "~0.8.5",
-    "angular-ui": "~0.4.0"
+    "angular-ui": "~0.4.0",
+    "angular-resource": "~1.4.7"
   }
 }

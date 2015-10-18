@@ -42,7 +42,7 @@ module.exports.connections = {
   ***************************************************************************/
   mongo: {
     adapter: 'sails-mongo',
-    host: 'localhost',
+    host: '192.168.1.247',
     port: 27017,
     database: 'smartdom'
   }

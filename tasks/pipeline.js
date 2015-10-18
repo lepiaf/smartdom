@@ -17,6 +17,8 @@
 var cssFilesToInject = [
   'bower/bootstrap/dist/css/bootstrap.min.css',
   'bower/bootstrap/dist/css/bootstrap-theme.min.css',
+  'bower/angular-ui/build/angular-ui.min.css',
+  'bower/angular-chart.js/dist/angular-chart.min.css',
   'styles/**/*.css'
 ];
 
@@ -29,8 +31,11 @@ var jsFilesToInject = [
   'bower/jquery/dist/jquery.js',
   'bower/angular/angular.js',
   'bower/angular-route/angular-route.js',
+  'bower/angular-resource/angular-resource.js',
   'bower/angular-ui/build/angular-ui.js',
   'bower/bootstrap/dist/js/bootstrap.js',
+  'bower/Chart.js/Chart.min.js',
+  'bower/angular-chart.js/dist/angular-chart.min.js',
   'app.js',
   'pages/**/*.js'
 ];
