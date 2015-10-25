@@ -1,1 +1,8 @@
-angular.module('sampleApp', ['ngRoute', 'appRoutes', 'MainCtrl', 'NerdCtrl', 'NerdService']);
+angular.module('smartdomApp', [
+    'ngRoute',
+    'appRoutes',
+    'MainCtrl',
+    'smartdom.controller.event',
+    'smartdom.service.event',
+    'chart.js'
+]);

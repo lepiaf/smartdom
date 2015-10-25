@@ -1,3 +1,3 @@
 module.exports = {
-    url : 'mongodb://localhost/stencil-dev'
+    url : 'mongodb://192.168.1.247/smartdom'
 };
