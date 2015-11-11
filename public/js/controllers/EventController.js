@@ -3,12 +3,23 @@ angular.module('smartdom.controller.event', [])
         $scope.labels = [];
         $scope.data = [[]];
 
-        EventService.get().then(function(response) {
+        $scope.labelsHum = [];
+        $scope.dataHum = [[]];
+
+        EventService.getTemp().then(function(response) {
 
             angular.forEach(response.data, function (value) {
                     $scope.labels.push(value._id.hour);
-                    $scope.data[0].push(value.avgMinute);
+                    $scope.data[0].push(value.avgHour.toFixed(2));
                 });
+        });
+
+        EventService.getHum().then(function(response) {
+
+            angular.forEach(response.data, function (value) {
+                $scope.labelsHum.push(value._id.hour);
+                $scope.dataHum[0].push(value.avgHour.toFixed(2));
+            });
         });
 
 });

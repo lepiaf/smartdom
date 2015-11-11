@@ -6,9 +6,9 @@
  * Use API 1.5
  */
 
-var MySensors = function () {
-    this.version = 1.5;
-    this.constant = {
+var MySensors =  {
+    version: 1.5,
+    constant: {
         messageType: [
             {
                 value: 0,
@@ -193,9 +193,8 @@ var MySensors = function () {
                 subType: []
             }
         ]
-    };
-
-    this.getLabelType = function (valueType) {
+    },
+    getLabelType: function (valueType) {
         for (var i = 0; i < 5; i++) {
             if (this.constant.messageType[i].value === parseInt(valueType)) {
                 return this.constant.messageType[i].label;
@@ -203,9 +202,8 @@ var MySensors = function () {
         }
 
         return valueType;
-    };
-
-    this.getLabelSubType = function (valueType, valueSubtype) {
+    },
+    getLabelSubType: function (valueType, valueSubtype) {
         var arraySubType = [];
 
         for (var e = 0; e < 5; e++) {
@@ -222,14 +220,13 @@ var MySensors = function () {
         }
 
         return valueSubtype;
-    };
-
+    },
     /**
      * parse string and return object
      *
      * @param data
      */
-    this.parse = function (data) {
+    parse: function (data) {
         var splitedData = data.split(";");
         return {
             nodeId: splitedData[0],
@@ -239,7 +236,7 @@ var MySensors = function () {
             subType: this.getLabelSubType(splitedData[2], splitedData[4]),
             payload: splitedData[5]
         }
-    };
+    }
 };
 
 module.exports = MySensors;

@@ -2,8 +2,11 @@ angular.module('smartdom.service.event', []).factory('EventService', ['$http', f
 
     return {
         // call to get all nerds
-        get : function() {
-            return $http.get('/api/events');
+        getTemp : function() {
+            return $http.get('/api/events/V_TEMP');
+        },
+        getHum: function() {
+            return $http.get('/api/events/V_HUM');
         }
     }
 
