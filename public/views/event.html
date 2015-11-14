@@ -1,9 +1,16 @@
-<div class="row">
+<div class="row" ng-init="init()">
     <div class="col-md-12">
         <h2>Last 24 hours</h2>
-        <canvas id="line" class="chart chart-line" chart-data="data" chart-options="{animation:false, bezierCurve:false}"
+        <canvas id="line" class="chart chart-line" chart-data="data" chart-options="{animation:false}"
                 chart-labels="labels" chart-legend="true" chart-series="['Average temperature', 'Average humidity']"
-                chart-click="onClick">
+                chart-click="onClickGraphHour">
+        </canvas>
+    </div>
+
+    <div class="col-md-12" ng-show="selectedHour">
+        <h2>Selected hour : <span>{{selectedHour.toDate() | date :"dd/MM/yyyy HH:mm:ss"}}</span></h2>
+        <canvas id="line" class="chart chart-line" chart-data="dataHour" chart-options="{animation:false}"
+                chart-labels="labelsHour" chart-legend="true" chart-series="['Average temperature', 'Average humidity']">
         </canvas>
     </div>
 </div>

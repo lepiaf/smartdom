@@ -4,6 +4,7 @@ var eventController = require('./controllers/eventController');
 module.exports = function(app) {
     // server routes ===========================================================
     app.get('/api/events/:subType', eventController.getSubType);
+    app.get('/api/events/:subType/lastHour/:selectedHour', eventController.getSubTypeLastHour);
 
     // frontend routes =========================================================
     app.get('*', function(req, res) {
