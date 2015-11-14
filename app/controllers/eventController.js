@@ -2,15 +2,8 @@ var Event = require('../models/event');
 var moment = require('moment');
 
 module.exports = {
-    checkSubType: function (req) {
-        if (req.params.subType !== "V_TEMP" && req.params.subType !== "V_HUM") {
-            return false;
-        }
-
-        return true;
-    },
     getSubType: function(req, res) {
-        if (!this.checkSubType(req)) {
+        if (req.params.subType !== "V_TEMP" && req.params.subType !== "V_HUM") {
             res.json({"error": "invalid type"});
         }
 
@@ -49,7 +42,7 @@ module.exports = {
         });
     },
     getSubTypeLastHour: function(req, res) {
-        if (!this.checkSubType(req)) {
+        if (req.params.subType !== "V_TEMP" && req.params.subType !== "V_HUM") {
             res.json({"error": "invalid type"});
         }
 
@@ -76,7 +69,7 @@ module.exports = {
                         "hour":{"$hour":"$createdAt"},
                         "minute":{"$minute":"$createdAt"}
                     },
-                    "avgMi  nute": {"$avg":"$payload"}
+                    "avgMinute": {"$avg":"$payload"}
                 }
             },
             {
