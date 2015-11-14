@@ -27,6 +27,11 @@ module.exports = {
                     },
                     "avgHour": {"$avg":"$payload"}
                 }
+            },
+            {
+                "$sort": {
+                    "_id": 1
+                }
             }
         ], function(err, results) {
             if (err) {
