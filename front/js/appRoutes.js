@@ -12,6 +12,14 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             templateUrl: 'views/event.html',
             controller: 'EventController'
         })
+        .when('/nodes/:nodeId', {
+            templateUrl: 'views/sensor/list.html',
+            controller: 'SensorController'
+        })
+        .when('/nodes', {
+            templateUrl: 'views/node/list.html',
+            controller: 'NodeController'
+        })
     ;
 
     $locationProvider.html5Mode(true);
