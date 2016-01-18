@@ -3,13 +3,14 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lepiaf/smartdom" 
+    "url": "https://github.com/lepiaf/smartdom"
   },
-  "license":"MIT",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "~1.4.2",
     "express": "~4.5.1",
     "gulp": "^3.9.0",
+    "influx": "^4.1.0",
     "lodash": "^3.10.1",
     "method-override": "~2.0.2",
     "moment": "^2.10.6",
