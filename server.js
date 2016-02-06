@@ -63,6 +63,7 @@ sp.on('open', function(){
             nodeId: sensorData.nodeId,
             payload: sensorData.payload,
             subType: sensorData.subType,
+            childSensorId: sensorData.childSensorId,
             time : new Date()
         };
 
