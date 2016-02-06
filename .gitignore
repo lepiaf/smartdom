@@ -1,6 +1,7 @@
 node_modules
 front/libs/
 public/dist/
+public/libs/
 config/db.js
 
 !.gitkeep
