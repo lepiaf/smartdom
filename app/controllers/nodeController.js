@@ -1,11 +1,15 @@
 var Node = require('../models/node');
 var moment = require('moment');
 var _ = require('lodash');
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
-
 
 module.exports = {
+    eventEmitter: null,
+    getClose: function (req, res) {
+        module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
+    },
+    getOpen: function (req, res) {
+        module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;1\n");
+    },
     /**
      * Get one sensors in gateway
      *
@@ -28,7 +32,6 @@ module.exports = {
      * @param res
      */
     getNodes: function(req, res) {
-        eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
         Node.find(function(err, result) {
             if (err) {
                 res.send(err);

@@ -10,7 +10,6 @@ var SerialPort = serialport.SerialPort;
 var Event = require('./app/models/event');
 var influx = require('influx');
 var events = require('events');
-// configuration ===========================================
 
 var eventEmitter = new events.EventEmitter();
 
@@ -34,8 +33,8 @@ require('./app/routes')(app); // pass our application into our routes
 
 // start app ===============================================
 app.listen(port);
-console.log('Magic happens on port ' + port); 			// shoutout to the user
-exports = module.exports = app; 						// expose app
+console.log('Smartdom is ready on port:' + port);
+exports = module.exports = app;
 
 var influxClient = influx({
     // or single-host configuration
@@ -48,7 +47,7 @@ var influxClient = influx({
 var sp = new SerialPort("/dev/ttyACM0", {
     parser: serialport.parsers.readline("\n"),
     baudrate: 115200
-});
+}, true);
 
 var mysensorsSendMessage = function(message) {
   sp.write(message, function(err, res) {});
@@ -61,6 +60,7 @@ sp.on('open', function(){
             return;
         }
         sensorData.payload = parseFloat(sensorData.payload);
+        var event = new Event(sensorData);
 
         var influxPoint = {
             nodeId: sensorData.nodeId,
@@ -72,5 +72,7 @@ sp.on('open', function(){
         influxClient.writePoint(event.subType, influxPoint, null, function(err, response) {});
     });
 
-    eventEmitter.on('mysensors_send_message', mysensorsSendMessage);
+    eventEmitter.on('mysensors_send_message', function (message){
+        sp.write(message, function(err, res) {});
+    });
 });
