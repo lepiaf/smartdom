@@ -4,18 +4,25 @@ var app            = express();
 var mongoose       = require('mongoose');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-
+var mongoose = require('mongoose');
+var serialport = require("serialport");
+var SerialPort = serialport.SerialPort;
+var Event = require('./app/models/event');
+var influx = require('influx');
+var events = require('events');
 // configuration ===========================================
+
+var eventEmitter = new events.EventEmitter();
 
 // config files
 var db = require('./config/db');
 
-var port = process.env.PORT || 9090; // set our port
+var port = 9090; // set our port
 require('mongoose-double')(mongoose);
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
 
 // get all data/stuff of the body (POST) parameters
-app.use(bodyParser.json()); // parse application/json 
+app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
 
@@ -29,3 +36,41 @@ require('./app/routes')(app); // pass our application into our routes
 app.listen(port);
 console.log('Magic happens on port ' + port); 			// shoutout to the user
 exports = module.exports = app; 						// expose app
+
+var influxClient = influx({
+    // or single-host configuration
+    host : 'localhost',
+    username : 'smartdom',
+    password : 'smartdom',
+    database : 'smartdom'
+});
+
+var sp = new SerialPort("/dev/ttyACM0", {
+    parser: serialport.parsers.readline("\n"),
+    baudrate: 115200
+});
+
+var mysensorsSendMessage = function(message) {
+  sp.write(message, function(err, res) {});
+}
+
+sp.on('open', function(){
+    sp.on('data', function(data) {
+        var sensorData = MySensors.parse(data);
+        if (sensorData.messageType === "internal") {
+            return;
+        }
+        sensorData.payload = parseFloat(sensorData.payload);
+
+        var influxPoint = {
+            nodeId: sensorData.nodeId,
+            payload: sensorData.payload,
+            subType: sensorData.subType,
+            time : new Date()
+        };
+
+        influxClient.writePoint(event.subType, influxPoint, null, function(err, response) {});
+    });
+
+    eventEmitter.on('mysensors_send_message', mysensorsSendMessage);
+});

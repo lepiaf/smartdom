@@ -1,6 +1,9 @@
 var Node = require('../models/node');
 var moment = require('moment');
 var _ = require('lodash');
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+
 
 module.exports = {
     /**
@@ -25,6 +28,7 @@ module.exports = {
      * @param res
      */
     getNodes: function(req, res) {
+        eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
         Node.find(function(err, result) {
             if (err) {
                 res.send(err);
