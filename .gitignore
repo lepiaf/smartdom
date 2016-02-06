@@ -3,5 +3,6 @@ front/libs/
 public/dist/
 public/libs/
 config/db.js
+.idea
 
 !.gitkeep
