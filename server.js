@@ -10,6 +10,7 @@ var SerialPort = serialport.SerialPort;
 var Event = require('./app/models/event');
 var influx = require('influx');
 var events = require('events');
+var MySensors = require('./app/services/MySensors');
 
 var eventEmitter = new events.EventEmitter();
 
@@ -48,10 +49,6 @@ var sp = new SerialPort("/dev/ttyACM0", {
     parser: serialport.parsers.readline("\n"),
     baudrate: 115200
 }, true);
-
-var mysensorsSendMessage = function(message) {
-  sp.write(message, function(err, res) {});
-}
 
 sp.on('open', function(){
     sp.on('data', function(data) {
