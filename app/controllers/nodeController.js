@@ -6,9 +6,11 @@ module.exports = {
     eventEmitter: null,
     getClose: function (req, res) {
         module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
+        res.send({});
     },
     getOpen: function (req, res) {
         module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;1\n");
+        res.send({});
     },
     /**
      * Get one sensors in gateway
