@@ -9,9 +9,11 @@ angular.module('smartdom.controller.sensor', [])
             $scope.nodeSensor = response.data.childSensors;
         });
 
-        NodeService.getNodesSensor($routeParams.nodeId, $routeParams.sensor).then(function(response) {
-            $scope.sensor = response.data;
-        });
+        if ($routeParams.sensor) {
+            NodeService.getNodesSensor($routeParams.nodeId, $routeParams.sensor).then(function(response) {
+                $scope.sensor = response.data;
+            });
+        }
 
         $scope.changeState = function (state) {
             NodeService.putNodesSensorsState($routeParams.nodeId, $routeParams.sensor, state);
