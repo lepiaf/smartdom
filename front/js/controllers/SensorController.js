@@ -3,6 +3,7 @@ angular.module('smartdom.controller.sensor', [])
 
         $scope.sensor = {};
         $scope.nodeSensor = {};
+        $scope.nodeId = $routeParams.nodeId;
 
         NodeService.getNodesSensors($routeParams.nodeId).then(function(response) {
             $scope.nodeSensor = response.data.childSensors;
