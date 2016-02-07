@@ -16,6 +16,10 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             templateUrl: 'views/sensor/list.html',
             controller: 'SensorController'
         })
+        .when('/nodes/:nodeId/sensor/:sensor', {
+            templateUrl: 'views/sensor/one.html',
+            controller: 'SensorController'
+        })
         .when('/nodes', {
             templateUrl: 'views/node/list.html',
             controller: 'NodeController'
