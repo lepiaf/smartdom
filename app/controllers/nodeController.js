@@ -1,6 +1,8 @@
 var Node = require('../models/node');
 var moment = require('moment');
 var _ = require('lodash');
+var async = require('async');
+var MySensors = require('../services/MySensors');
 
 module.exports = {
     eventEmitter: null,
@@ -13,18 +15,82 @@ module.exports = {
         res.send({});
     },
     /**
-     * Get one sensors in gateway
+     * Change state of sensor
      *
      * @param req
      * @param res
      */
-    getNodesOneSensor: function(req, res) {
+    putNodesSensorsState: function (req, res) {
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+                var message = MySensors.createMessage(
+                    req.params.node,
+                    sensor.sensorId,
+                    MySensors.messageType.req,
+                    MySensors.valueType.V_STATUS,
+                    req.body.state
+                );
+
+                module.exports.eventEmitter.emit('mysensors_send_message', message);
+
+                res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.state});
+            });
+        });
+    },
+    /**
+     * Get all sensors of one node
+     *
+     * @param req
+     * @param res
+     */
+    cgetNodesSensors: function(req, res) {
         Node.findOne({nodeId: req.params.nodeId}, function(err, result) {
             if (err) {
                 res.send(err);
             }
 
-            res.send(result);
+            res.send(result.childSensors);
+        });
+    },
+    /**
+     * Get one sensors of one node
+     *
+     * @param req
+     * @param res
+     */
+    getNodesSensors: function(req, res) {
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+                res.send(sensor);
+            });
         });
     },
     /**
@@ -33,7 +99,7 @@ module.exports = {
      * @param req
      * @param res
      */
-    getNodes: function(req, res) {
+    cgetNodes: function(req, res) {
         Node.find(function(err, result) {
             if (err) {
                 res.send(err);
@@ -43,12 +109,12 @@ module.exports = {
         });
     },
     /**
-     * Get all nodes
+     * Get one node
      *
      * @param req
      * @param res
      */
-    getNode: function(req, res) {
+    getNodes: function(req, res) {
         Node.findOne({nodeId: req.params.nodeId},function(err, result) {
             if (err) {
                 res.send(err);
@@ -90,8 +156,6 @@ module.exports = {
             result.save(function(err, data) {
                 res.send(data);
             });
-
-
         });
     }
 };

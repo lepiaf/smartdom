@@ -4,13 +4,11 @@ var app            = express();
 var mongoose       = require('mongoose');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-var mongoose = require('mongoose');
-var serialport = require("serialport");
-var SerialPort = serialport.SerialPort;
-var Event = require('./app/models/event');
-var influx = require('influx');
-var events = require('events');
-var MySensors = require('./app/services/MySensors');
+var serialport     = require("serialport");
+var SerialPort     = serialport.SerialPort;
+var influx         = require('influx');
+var events         = require('events');
+var MySensors      = require('./app/services/MySensors');
 
 var eventEmitter = new events.EventEmitter();
 
@@ -57,7 +55,6 @@ sp.on('open', function(){
             return;
         }
         sensorData.payload = parseFloat(sensorData.payload);
-        var event = new Event(sensorData);
 
         var influxPoint = {
             nodeId: sensorData.nodeId,
@@ -67,7 +64,7 @@ sp.on('open', function(){
             time : new Date()
         };
 
-        influxClient.writePoint(event.subType, influxPoint, null, function(err, response) {});
+        influxClient.writePoint(sensorData.subType, influxPoint, null, function(err, response) {});
     });
 
     eventEmitter.on('mysensors_send_message', function (message){
