@@ -2,6 +2,7 @@ var Node = require('../models/node');
 var moment = require('moment');
 var _ = require('lodash');
 var async = require('async');
+var MySensors = require('../services/MySensors');
 
 module.exports = {
     eventEmitter: null,
@@ -12,6 +13,43 @@ module.exports = {
     getOpen: function (req, res) {
         module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;1\n");
         res.send({});
+    },
+    /**
+     * Change state of sensor
+     *
+     * @param req
+     * @param res
+     */
+    putNodesSensorsState: function (req, res) {
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+                var message = MySensors.createMessage(
+                    req.params.node,
+                    sensor.sensorId,
+                    MySensors.messageType.req,
+                    MySensors.valueType.V_STATUS,
+                    req.body.state
+                );
+
+                module.exports.eventEmitter.emit('mysensors_send_message', message);
+
+                res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.state});
+            });
+        });
     },
     /**
      * Get all sensors of one node

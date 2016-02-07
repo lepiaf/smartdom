@@ -4,9 +4,9 @@ module.exports = function(app, eventEmitter) {
     // share eventEmitter
     nodeController.eventEmitter = eventEmitter;
 
+    app.put('/api/nodes/:node/sensors/:sensor', nodeController.putNodesSensorsState);
     app.post('/api/nodes', nodeController.postNodes);
     app.put('/api/nodes/:nodeId', nodeController.putNodes);
-    app.put('/api/nodes/:nodeId/sensors', nodeController.putNodeSensor);
 
     app.get('/api/nodes', nodeController.cgetNodes);
     app.get('/api/nodes/:nodeId', nodeController.getNodes);
