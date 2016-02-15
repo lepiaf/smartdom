@@ -1,3 +1,10 @@
-<div ng-repeat="node in nodes">
-    <a href="/#/nodes/{{node.nodeId}}">{{node.name}}</a>
+<div class="row nodes">
+    <div ng-repeat="node in nodes" class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{node.name}}</div>
+            <div class="panel-body">
+                <a class="btn btn-default" href="/#/nodes/{{node.nodeId}}">voir plus</a>
+            </div>
+        </div>
+    </div>
 </div>

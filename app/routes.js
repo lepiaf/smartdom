@@ -5,6 +5,8 @@ module.exports = function(app, eventEmitter) {
     nodeController.eventEmitter = eventEmitter;
 
     app.put('/api/nodes/:node/sensors/:sensor', nodeController.putNodesSensorsState);
+    app.put('/api/nodes/:node/remotes/:sensor', nodeController.putNodesSensorsRemote);
+
     app.post('/api/nodes', nodeController.postNodes);
     app.put('/api/nodes/:nodeId', nodeController.putNodes);
 
@@ -14,7 +16,7 @@ module.exports = function(app, eventEmitter) {
     app.get('/api/nodes/:node/sensors/:sensor', nodeController.getNodesSensors);
 
     // frontend routes =========================================================
-    app.get('*', function(req, res) {
-        res.sendfile('./public/index.html'); // load our public/index.html file
+    app.all('/*', function(req, res) {
+        res.sendfile('public/index.html', { root: __dirname+'/../' });
     });
 };

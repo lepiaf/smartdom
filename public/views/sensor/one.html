@@ -1,17 +1,31 @@
+<div class="row sensor">
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{sensor.name}}</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <table class="table table-bordered">
-            <thead>
-                <td>Clé</td><td>Valeur</td>
-            </thead>
-            <tbody>
-            <tr ng-repeat="(key, value) in sensor">
-                <td>{{key}}</td><td>{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
-        <button ng-click="changeState(1)">Allumer</button>
-        <button ng-click="changeState(0)">Eteindre</button>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Clé</td><td>Valeur</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="(key, value) in sensor">
+                    <td>{{key}}</td><td>{{value}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="panel-footer" ng-if="sensor.type === 'actuator'">
+                <button class="btn btn-success" ng-click="changeState(1)">Allumer</button>
+                <button class="btn btn-danger" ng-click="changeState(0)">Eteindre</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row remote" ng-if="sensor.type === 'remote'">
+    <div class="col-sm-6 col-md-4">
+        <button class="btn btn-default" ng-click="sendButton(20)">On/Off</button>
     </div>
 </div>

@@ -4,25 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <base href="/">
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>smartdom</title>
 
     <link rel="stylesheet" href="dist/style.css">
-    <script src="dist/app.js"></script>
+
 </head>
 <body ng-app="smartdomApp" ng-controller="MainController">
-    <div class="container">
-        <nav class="navbar navbar-inverse">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">Smartdom</a>
-            </div>
-
-            <ul class="nav navbar-nav">
-                <li><a ng-href="/#/nodes">Nodes</a></li>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">smartdom</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">Tableau de bord</a></li>
+                <li><a href="/nodes">Modules</a></li>
+                <li><a target="_blank" href="http://ma-maison.piaf.eu/dashboard/db/smartdom">Métriques</a></li>
             </ul>
-        </nav>
-
-        <div ng-view></div>
+        </div>
     </div>
+</nav>
+
+<div class="container-fluid">
+    <div ng-view></div>
+</div>
+<script src="dist/app.js"></script>
 </body>
 </html>
