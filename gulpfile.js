@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-var watch = require('gulp-watch');
 
 var root = "front/";
 var destinationDir = "public/dist";
