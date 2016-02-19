@@ -1,17 +1,75 @@
+<div class="row sensor">
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{sensor.name}}</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <table class="table table-bordered">
-            <thead>
-                <td>Clé</td><td>Valeur</td>
-            </thead>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Clé</td><td>Valeur</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="(key, value) in sensor">
+                    <td>{{key}}</td><td>{{value}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="panel-footer" ng-if="sensor.type === 'actuator'">
+                <button class="btn btn-success" ng-click="changeState(1)">Allumer</button>
+                <button class="btn btn-danger" ng-click="changeState(0)">Eteindre</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row remote" ng-if="sensor.type === 'remote' && sensor.name === 'Samsung TV'">
+    <div class="col-sm-6 col-md-4">
+
+        <table class="table">
             <tbody>
-            <tr ng-repeat="(key, value) in sensor">
-                <td>{{key}}</td><td>{{value}}</td>
+            <tr>
+                <td><button class="btn btn-warning btn-lg" ng-click="sendButton(20)"><span class="glyphicon glyphicon-off"></span> On/Off</button></td>
+                <td></td>
+                <td>
+                    <button class="btn btn-default btn-lg" ng-click="sendButton(2)">source</button>
+                </td>
+            </tr>
+            <tr>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(16)"><span class="glyphicon glyphicon-volume-down"></span> volume -</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(2)"><span class="glyphicon glyphicon-volume-off"></span> mute</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(15)"><span class="glyphicon glyphicon-volume-up"></span> volume +</button></td>
             </tr>
             </tbody>
         </table>
-        <button ng-click="changeState(1)">Allumer</button>
-        <button ng-click="changeState(0)">Eteindre</button>
+
+    </div>
+</div>
+
+<div class="row remote" ng-if="sensor.type === 'remote' && sensor.name === 'BBox'">
+    <div class="col-sm-6 col-md-4">
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <td><button class="btn btn-warning btn-lg" ng-click="sendButton(1)"><span class="glyphicon glyphicon-off"></span> On/Off</button></td>
+                <td></td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(15)"><span class="glyphicon glyphicon-volume-down"></span> volume -</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(0)"><span class="glyphicon glyphicon-volume-off"></span> mute</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(14)"><span class="glyphicon glyphicon-volume-up"></span> volume +</button></td>
+            </tr>
+            <tr>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(15)"><span class="glyphicon glyphicon-chevron-left"></span> programme -</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(14)"><span class="glyphicon glyphicon glyphicon-play"></span> play/pause</button></td>
+                <td><button class="btn btn-default btn-lg" ng-click="sendButton(14)"><span class="glyphicon glyphicon-chevron-right"></span> programme +</button></td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
 </div>

@@ -14,6 +14,37 @@ module.exports = {
         module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;1\n");
         res.send({});
     },
+    putNodesSensorsRemote: function (req, res) {
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+                var message = MySensors.createMessage(
+                    req.params.node,
+                    sensor.sensorId,
+                    MySensors.messageType.set,
+                    20,
+                    req.body.button
+                );
+
+                module.exports.eventEmitter.emit('mysensors_send_message', message);
+
+                res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.button});
+            });
+        });
+    },
     /**
      * Change state of sensor
      *

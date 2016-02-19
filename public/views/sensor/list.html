@@ -1,3 +1,10 @@
-<div ng-repeat="sensor in nodeSensor">
-    <a href="/#/nodes/{{nodeId}}/sensor/{{sensor.sensorId}}">{{sensor.name}}</a>
+<div class="row sensors">
+    <div ng-repeat="sensor in nodeSensor" class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{sensor.name}}</div>
+            <div class="panel-body">
+                <a class="btn btn-default" href="/#/nodes/{{nodeId}}/sensor/{{sensor.sensorId}}">voir plus</a>
+            </div>
+        </div>
+    </div>
 </div>

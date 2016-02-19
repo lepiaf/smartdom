@@ -17,6 +17,9 @@ angular.module('smartdom.controller.sensor', [])
 
         $scope.changeState = function (state) {
             NodeService.putNodesSensorsState($routeParams.nodeId, $routeParams.sensor, state);
-        }
+        };
 
+        $scope.sendButton = function (state) {
+            NodeService.putNodesSensorsButton($routeParams.nodeId, $routeParams.sensor, state);
+        };
     }]);

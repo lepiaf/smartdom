@@ -12,6 +12,9 @@ angular.module('smartdom.service.node', []).factory('NodeService', ['$http', fun
         },
         putNodesSensorsState: function(nodeId, sensorId, state) {
             return $http.put('/api/nodes/'+nodeId+'/sensors/'+sensorId, {state: state});
+        },
+        putNodesSensorsButton: function(nodeId, sensorId, state) {
+            return $http.put('/api/nodes/'+nodeId+'/remotes/'+sensorId, {button: state});
         }
     }
 }]);

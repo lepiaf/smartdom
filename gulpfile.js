@@ -6,6 +6,8 @@ var destinationDir = "public/dist";
 
 var js = [
     // js libs
+    root+"libs/jquery/dist/jquery.js",
+    root+"libs/bootstrap/dist/js/bootstrap.min.js",
     root+"libs/angular/angular.min.js",
     root+"libs/angular-route/angular-route.min.js",
     root+"libs/Chart.js/Chart.min.js",
