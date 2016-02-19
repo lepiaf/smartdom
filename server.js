@@ -74,12 +74,31 @@ sp.on('open', function(){
     });
 });
 
-var cfg = {
-    APPID: db.openweathermap.key,
-    id: db.openweathermap.city
-};
-var j = schedule.scheduleJob('1 * * * *', function(){
-    weather.now(cfg, function (err, data) {
+var influxClientWeather = influx({
+    // or single-host configuration
+    host : 'localhost',
+    username : 'weather',
+    password : 'weather',
+    database : 'weather'
+});
+
+weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: db.openweathermap.key});
+
+setInterval(function(){
+    weather.now({id: db.openweathermap.city}, function (err, data) {
+        var influxPoint = {
+            main: data.weather[0].main,
+            description: data.weather[0].description,
+            icon: data.weather[0].icon,
+            temp: data.main.temp,
+            pressure: data.main.pressure,
+            humidity: data.main.humidity,
+            wind: data.wind.speed,
+            cloud: data.clouds.all,
+            time : new Date(data.dt*1000)
+        };
+
+        influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
         console.log(data);
     });
-});
+}, 60000);
