@@ -6,3 +6,4 @@ config/db.js
 .idea
 
 !.gitkeep
+config/db.js
