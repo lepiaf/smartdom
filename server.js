@@ -95,10 +95,11 @@ setInterval(function(){
             humidity: data.main.humidity,
             wind: data.wind.speed,
             cloud: data.clouds.all,
+            rain: data.rain['3h'],
+            snow: data.snow['3h'],
             time : new Date(data.dt*1000)
         };
 
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
-        console.log(data);
     });
 }, 60000);
