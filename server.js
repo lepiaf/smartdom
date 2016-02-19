@@ -9,6 +9,8 @@ var SerialPort     = serialport.SerialPort;
 var influx         = require('influx');
 var events         = require('events');
 var MySensors      = require('./app/services/MySensors');
+var schedule       = require('node-schedule');
+var weather        = require('openweathermap');
 
 var eventEmitter = new events.EventEmitter();
 
@@ -69,5 +71,15 @@ sp.on('open', function(){
 
     eventEmitter.on('mysensors_send_message', function (message){
         sp.write(message, function(err, res) {});
+    });
+});
+
+var cfg = {
+    APPID: db.openweathermap.key,
+    id: db.openweathermap.city
+};
+var j = schedule.scheduleJob('1 * * * *', function(){
+    weather.now(cfg, function (err, data) {
+        console.log(data);
     });
 });
