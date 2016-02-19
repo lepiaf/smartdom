@@ -9,6 +9,8 @@ var SerialPort     = serialport.SerialPort;
 var influx         = require('influx');
 var events         = require('events');
 var MySensors      = require('./app/services/MySensors');
+var schedule       = require('node-schedule');
+var weather        = require('openweathermap');
 
 var eventEmitter = new events.EventEmitter();
 
@@ -71,3 +73,32 @@ sp.on('open', function(){
         sp.write(message, function(err, res) {});
     });
 });
+
+var influxClientWeather = influx({
+    // or single-host configuration
+    host : 'localhost',
+    username : 'weather',
+    password : 'weather',
+    database : 'weather'
+});
+
+weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: db.openweathermap.key});
+
+setInterval(function(){
+    weather.now({id: db.openweathermap.city}, function (err, data) {
+        var influxPoint = {
+            main: data.weather[0].main,
+            description: data.weather[0].description,
+            icon: data.weather[0].icon,
+            temp: data.main.temp,
+            pressure: data.main.pressure,
+            humidity: data.main.humidity,
+            wind: data.wind.speed,
+            cloud: data.clouds.all,
+            time : new Date(data.dt*1000)
+        };
+
+        influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
+        console.log(data);
+    });
+}, 60000);
