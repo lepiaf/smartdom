@@ -95,11 +95,13 @@ setInterval(function(){
             humidity: data.main.humidity,
             wind: data.wind.speed,
             cloud: data.clouds.all,
-            rain: data.rain['3h'],
-            snow: data.snow['3h'],
-            time : new Date(data.dt*1000)
+            time : new Date()
         };
+
+        if (data.rain && data.rain['3h']) {
+            influxPoint.rain =  data.rain['3h'];
+        }
 
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });
-}, 60000);
+}, 120000);
