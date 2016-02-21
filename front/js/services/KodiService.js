@@ -37,6 +37,9 @@ angular.module('smartdom.service.kodi', []).factory('KodiService', ['$http', fun
         },
         stop: function () {
             return $http.post(host+'Player.Stop', {"jsonrpc":"2.0","method":"Player.Stop","id":1,"params":{"playerid":1}});
+        },
+        poweroff: function () {
+            return $http.post(host+'System.Shutdown', {"jsonrpc":"2.0","method":"Player.Stop","id":1,"params":{"playerid":1}});
         }
     }
 }]);
