@@ -1,8 +1,11 @@
 var nodeController = require('./controllers/nodeController');
+var kodiController = require('./controllers/kodiController');
 
 module.exports = function(app, eventEmitter) {
     // share eventEmitter
     nodeController.eventEmitter = eventEmitter;
+
+    app.post('/api/kodi', kodiController.post);
 
     app.put('/api/nodes/:node/sensors/:sensor', nodeController.putNodesSensorsState);
     app.put('/api/nodes/:node/remotes/:sensor', nodeController.putNodesSensorsRemote);
