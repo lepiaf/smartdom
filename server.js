@@ -35,7 +35,7 @@ require('./app/routes')(app, eventEmitter); // pass our application into our rou
 app.listen(port);
 console.log('Smartdom is ready on port:' + port);
 exports = module.exports = app;
-/**
+
 var influxClient = influx({
     // or single-host configuration
     host : 'localhost',
@@ -104,4 +104,3 @@ setInterval(function(){
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });
 }, 120000);
-*/
