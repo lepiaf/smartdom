@@ -1,9 +1,10 @@
 var nodeController = require('./controllers/nodeController');
 var kodiController = require('./controllers/kodiController');
 
-module.exports = function(app, eventEmitter) {
+module.exports = function(app, eventEmitter, influxClient) {
     // share eventEmitter
     nodeController.eventEmitter = eventEmitter;
+    nodeController.influxClient = influxClient;
 
     app.post('/api/kodi', kodiController.post);
 
@@ -17,6 +18,8 @@ module.exports = function(app, eventEmitter) {
     app.get('/api/nodes/:nodeId', nodeController.getNodes);
     app.get('/api/nodes/:nodeId/sensors', nodeController.cgetNodesSensors);
     app.get('/api/nodes/:node/sensors/:sensor', nodeController.getNodesSensors);
+
+    app.get('/api/nodes/:node/sensors/:sensor/temperature', nodeController.getNodesSensorsTemperature);
 
     // frontend routes =========================================================
     app.all('/*', function(req, res) {

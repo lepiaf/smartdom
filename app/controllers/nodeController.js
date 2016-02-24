@@ -5,6 +5,7 @@ var async = require('async');
 var MySensors = require('../services/MySensors');
 
 module.exports = {
+    influxClient: null,
     eventEmitter: null,
     getClose: function (req, res) {
         module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
@@ -186,6 +187,37 @@ module.exports = {
 
             result.save(function(err, data) {
                 res.send(data);
+            });
+        });
+    },
+    /**
+     * Get temperature from influx db
+     * @param req
+     * @param res
+     */
+    getNodesSensorsTemperature: function(req, res) {
+        var self = this;
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+
+                var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1m'
+                module.exports.influxClient.query(query, function(err, results) {
+                    res.send(results);
+                });
             });
         });
     }

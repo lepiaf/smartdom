@@ -12,7 +12,13 @@ var MySensors      = require('./app/services/MySensors');
 var weather        = require('openweathermap');
 
 var eventEmitter = new events.EventEmitter();
-
+var influxClient = influx({
+    // or single-host configuration
+    host : 'localhost',
+    username : 'smartdom',
+    password : 'smartdom',
+    database : 'smartdom'
+});
 // config files
 var db = require('./config/db');
 
@@ -29,20 +35,13 @@ app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-M
 app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
 
 // routes ==================================================
-require('./app/routes')(app, eventEmitter); // pass our application into our routes
+require('./app/routes')(app, eventEmitter, influxClient); // pass our application into our routes
 
 // start app ===============================================
 app.listen(port);
 console.log('Smartdom is ready on port:' + port);
 exports = module.exports = app;
 
-var influxClient = influx({
-    // or single-host configuration
-    host : 'localhost',
-    username : 'smartdom',
-    password : 'smartdom',
-    database : 'smartdom'
-});
 
 var sp = new SerialPort("/dev/ttyACM0", {
     parser: serialport.parsers.readline("\n"),
