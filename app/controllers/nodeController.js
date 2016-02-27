@@ -212,9 +212,8 @@ module.exports = {
                 if (!sensor) {
                     return res.status(404).send({code: 404, message: "Sensor not found"});
                 }
-
-
-                var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1m'
+                
+                var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1h';
                 module.exports.influxClient.query(query, function(err, results) {
                     res.send(results);
                 });
