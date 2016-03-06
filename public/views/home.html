@@ -263,3 +263,69 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-xs-12"><h2>Chauffage</h2></div>
+</div>
+<div class="row heater">
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Salon gauche</h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-success btn-lg" ng-click="heaterService.setEco('salonGauche')"><span class="glyphicon glyphicon-leaf"></span> Eco</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-warning btn-lg" ng-click="heaterService.setComfy('salonGauche')"><span class="glyphicon glyphicon-fire"></span> Comfort</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-danger btn-lg" ng-click="heaterService.setStop('salonGauche')"><span class="glyphicon glyphicon-remove"></span> Arrêt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Salon droite</h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-success btn-lg" ng-click="heaterService.setEco('salonDroite')"><span class="glyphicon glyphicon-leaf"></span> Eco</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-warning btn-lg" ng-click="heaterService.setComfy('salonDroite')"><span class="glyphicon glyphicon-fire"></span> Comfort</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-danger btn-lg" ng-click="heaterService.setStop('salonDroite')"><span class="glyphicon glyphicon-remove"></span> Arrêt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Chambre</h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-success btn-lg" ng-click="heaterService.setEco('chambre')"><span class="glyphicon glyphicon-leaf"></span> Eco</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-warning btn-lg" ng-click="heaterService.setComfy('chambre')"><span class="glyphicon glyphicon-fire"></span> Comfort</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-danger btn-lg" ng-click="heaterService.setStop('chambre')"><span class="glyphicon glyphicon-remove"></span> Arrêt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

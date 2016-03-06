@@ -1,4 +1,6 @@
-angular.module('MainCtrl', []).controller('MainController', ['$scope', 'NodeService', 'KodiService', function($scope, NodeService, KodiService) {
+angular.module('MainCtrl', []).controller('MainController', [
+    '$scope', 'NodeService', 'KodiService', 'HeaterService',
+    function($scope, NodeService, KodiService, HeaterService) {
     $scope.sendButton = function (node, sensor, state) {
         NodeService.putNodesSensorsButton(node, sensor, state);
     };
@@ -19,6 +21,8 @@ angular.module('MainCtrl', []).controller('MainController', ['$scope', 'NodeServ
     NodeService.getNodesSensorTemperature(0,3).then(function(res){
         $scope.temperature.chambre = res.data.last;
     });
+
+    $scope.heaterService = HeaterService;
 
     $scope.kodi = KodiService;
 

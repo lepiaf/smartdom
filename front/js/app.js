@@ -4,6 +4,7 @@ angular.module('smartdomApp', [
     'MainCtrl',
     'smartdom.service.kodi',
     'smartdom.service.node',
+    'smartdom.service.heater',
     'smartdom.service.event',
     'smartdom.controller.event',
     'smartdom.controller.node',
