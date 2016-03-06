@@ -215,7 +215,7 @@ module.exports = {
                 
                 var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1h';
                 module.exports.influxClient.query(query, function(err, results) {
-                    res.send(results);
+                    res.send(results[0][0]);
                 });
             });
         });
