@@ -7,6 +7,12 @@ angular.module('MainCtrl', []).controller('MainController', [
             chambre: 0
         }
 
+        $scope.heater = {
+            chambre: "Arrêt",
+            salonDroite: "Arrêt",
+            salonGauche: "Arrêt"
+        }
+
         $scope.init = function () {
             NodeService.getNodesSensorTemperature(4,5).then(function(res){
                 $scope.temperature.salon = res.data.last;
@@ -16,6 +22,30 @@ angular.module('MainCtrl', []).controller('MainController', [
                 $scope.temperature.chambre = res.data.last;
             });
 
+            HeaterService.resource.getHeaterMode("chambre").then(function(res) {
+                $scope.heater.chambre = res.data.last;
+            });
+
+            HeaterService.resource.getHeaterMode("salonGauche").then(function(res) {
+                $scope.heater.salonGauche = res.data.last;
+            });
+
+            HeaterService.resource.getHeaterMode("salonDroite").then(function(res) {
+                $scope.heater.salonDroite = res.data.last;
+            });
+
+        }
+
+        $scope.getClassByRoom = function(room) {
+            if ($scope.heater[room] === "eco") {
+                return "label-success";
+            }
+
+            if ($scope.heater[room] === "comfort") {
+                return "label-warning";
+            }
+
+            return "label-danger";
         }
 
 

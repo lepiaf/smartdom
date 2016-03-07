@@ -271,7 +271,7 @@
     <div class="col-sm-6 col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Salon gauche <span class="pull-right label label-default">Eco</span></h3>
+                <h3 class="panel-title">Salon gauche <span class="pull-right label" ng-class="getClassByRoom('salonGauche')">{{ heater.salonGauche }}</span></h3>
             </div>
             <div class="panel-body">
                 <div class="btn-group btn-group-justified" role="group">
@@ -291,7 +291,7 @@
     <div class="col-sm-6 col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Salon droite <span class="pull-right label label-default">Eco</span></h3>
+                <h3 class="panel-title">Salon droite <span class="pull-right label" ng-class="getClassByRoom('salonDroite')">{{ heater.salonDroite }}</span></h3>
             </div>
             <div class="panel-body">
                 <div class="btn-group btn-group-justified" role="group">
@@ -311,7 +311,7 @@
     <div class="col-sm-6 col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Chambre <span class="pull-right label label-default">Eco</span></h3>
+                <h3 class="panel-title">Chambre <span class="pull-right label" ng-class="getClassByRoom('chambre')">{{ heater.chambre }}</span></h3>
             </div>
             <div class="panel-body">
                 <div class="btn-group btn-group-justified" role="group">

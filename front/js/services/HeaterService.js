@@ -1,4 +1,4 @@
-angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeService', 'ngToast', function(NodeService, ngToast) {
+angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeService', 'ngToast','$http', function(NodeService, ngToast, $http) {
     var nodeId = 5;
 
     var mapping = {
@@ -45,20 +45,20 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
             ]
         }
     };
+
+    var resource = {
+        getHeaterMode : function(room) {
+            return $http.get('/api/heaters/'+room);
+        },
+        putHeaterMode : function(room, mode) {
+            return $http.put('/api/heaters/'+room, {mode: mode});
+        }
+    };
+
     return {
-
+        resource:resource,
         setEco : function(room) {
-            NodeService.putNodesSensorsState(
-                mapping[room].eco[0].node,
-                mapping[room].eco[0].sensor,
-                mapping[room].eco[0].state
-            );
-
-            NodeService.putNodesSensorsState(
-                mapping[room].eco[1].node,
-                mapping[room].eco[1].sensor,
-                mapping[room].eco[1].state
-            );
+            resource.putHeaterMode(room, 'eco');
 
             ngToast.create({
                 className: 'success',
@@ -66,17 +66,7 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
             });
         },
         setComfy : function(room) {
-            NodeService.putNodesSensorsState(
-                mapping[room].comfy[0].node,
-                mapping[room].comfy[0].sensor,
-                mapping[room].comfy[0].state
-            );
-
-            NodeService.putNodesSensorsState(
-                mapping[room].comfy[1].node,
-                mapping[room].comfy[1].sensor,
-                mapping[room].comfy[1].state
-            );
+            resource.putHeaterMode(room, 'comfy');
 
             ngToast.create({
                 className: 'success',
@@ -84,17 +74,7 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
             });
         },
         setStop : function(room) {
-            NodeService.putNodesSensorsState(
-                mapping[room].stop[0].node,
-                mapping[room].stop[0].sensor,
-                mapping[room].stop[0].state
-            );
-
-            NodeService.putNodesSensorsState(
-                mapping[room].stop[1].node,
-                mapping[room].stop[1].sensor,
-                mapping[room].stop[1].state
-            );
+            resource.putHeaterMode(room, 'stop');
 
             ngToast.create({
                 className: 'success',

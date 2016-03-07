@@ -1,12 +1,19 @@
 var nodeController = require('./controllers/nodeController');
 var kodiController = require('./controllers/kodiController');
+var heaterController = require('./controllers/heaterController');
 
 module.exports = function(app, eventEmitter, influxClient) {
     // share eventEmitter
     nodeController.eventEmitter = eventEmitter;
     nodeController.influxClient = influxClient;
 
+    heaterController.influxClient = influxClient;
+    heaterController.eventEmitter = eventEmitter;
+
     app.post('/api/kodi', kodiController.post);
+
+    app.put('/api/heaters/:room', heaterController.putHeaterMode);
+    app.get('/api/heaters/:room', heaterController.getHeaterMode);
 
     app.put('/api/nodes/:node/sensors/:sensor', nodeController.putNodesSensorsState);
     app.put('/api/nodes/:node/remotes/:sensor', nodeController.putNodesSensorsRemote);
