@@ -41,7 +41,7 @@ angular.module('MainCtrl', []).controller('MainController', [
                 return "label-success";
             }
 
-            if ($scope.heater[room] === "comfort") {
+            if ($scope.heater[room] === "comfy") {
                 return "label-warning";
             }
 
