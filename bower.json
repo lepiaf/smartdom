@@ -10,6 +10,7 @@
     "Chart.js": "~1.0.2",
     "angular-chart.js": "~0.8.5",
     "moment": "~2.10.6",
-    "jquery": "^2.2.0"
+    "jquery": "^2.2.0",
+    "ngToast": "ngtoast#^1.5.6"
   }
 }

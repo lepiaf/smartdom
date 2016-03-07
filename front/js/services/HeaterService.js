@@ -1,4 +1,4 @@
-angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeService', function(NodeService) {
+angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeService', 'ngToast', function(NodeService, ngToast) {
     var nodeId = 5;
 
     var mapping = {
@@ -59,6 +59,11 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
                 mapping[room].eco[1].sensor,
                 mapping[room].eco[1].state
             );
+
+            ngToast.create({
+                className: 'success',
+                content: 'Mode "eco" pour le radiateur "'+room+'"'
+            });
         },
         setComfy : function(room) {
             NodeService.putNodesSensorsState(
@@ -72,6 +77,11 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
                 mapping[room].comfy[1].sensor,
                 mapping[room].comfy[1].state
             );
+
+            ngToast.create({
+                className: 'success',
+                content: 'Mode "confort" pour le radiateur "'+room+'"'
+            });
         },
         setStop : function(room) {
             NodeService.putNodesSensorsState(
@@ -85,6 +95,11 @@ angular.module('smartdom.service.heater', []).factory('HeaterService', ['NodeSer
                 mapping[room].stop[1].sensor,
                 mapping[room].stop[1].state
             );
+
+            ngToast.create({
+                className: 'success',
+                content: 'Mode "arrêt" pour le radiateur "'+room+'"'
+            });
         }
     }
 

@@ -20,6 +20,7 @@ module.exports = function(app, eventEmitter, influxClient) {
     app.get('/api/nodes/:node/sensors/:sensor', nodeController.getNodesSensors);
 
     app.get('/api/nodes/:node/sensors/:sensor/temperature', nodeController.getNodesSensorsTemperature);
+    app.get('/api/nodes/:node/sensors/:sensor/state', nodeController.getNodesSensorsState);
 
     // frontend routes =========================================================
     app.all('/*', function(req, res) {

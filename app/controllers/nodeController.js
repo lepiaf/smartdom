@@ -1,5 +1,4 @@
 var Node = require('../models/node');
-var moment = require('moment');
 var _ = require('lodash');
 var async = require('async');
 var MySensors = require('../services/MySensors');
@@ -7,14 +6,6 @@ var MySensors = require('../services/MySensors');
 module.exports = {
     influxClient: null,
     eventEmitter: null,
-    getClose: function (req, res) {
-        module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;0\n");
-        res.send({});
-    },
-    getOpen: function (req, res) {
-        module.exports.eventEmitter.emit('mysensors_send_message', "2;1;1;0;2;1\n");
-        res.send({});
-    },
     putNodesSensorsRemote: function (req, res) {
         Node.findOne({nodeId: req.params.node}, function(err, result) {
             if (err) {
@@ -214,6 +205,36 @@ module.exports = {
                 }
                 
                 var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1h';
+                module.exports.influxClient.query(query, function(err, results) {
+                    res.send(results[0][0]);
+                });
+            });
+        });
+    },
+    /**
+     * Get state from influx db
+     * @param req
+     * @param res
+     */
+    getNodesSensorsState: function(req, res) {
+        var self = this;
+        Node.findOne({nodeId: req.params.node}, function(err, result) {
+            if (err) {
+                res.send(err);
+            }
+
+            async.each(result.childSensors, function (sensor, callback) {
+                if (sensor.sensorId == req.params.sensor) {
+                    return callback(sensor);
+                }
+
+                callback();
+            }, function (sensor) {
+                if (!sensor) {
+                    return res.status(404).send({code: 404, message: "Sensor not found"});
+                }
+
+                var query = 'SELECT last("payload"), nodeId, childSensorId FROM "V_STATUS" WHERE "childSensorId" = \''+sensor.sensorId+'\' and "nodeId" = \''+req.params.node+'\'';
                 module.exports.influxClient.query(query, function(err, results) {
                     res.send(results[0][0]);
                 });

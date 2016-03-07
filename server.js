@@ -14,7 +14,7 @@ var weather        = require('openweathermap');
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
     // or single-host configuration
-    host : 'localhost',
+    host : '192.168.1.247',
     username : 'smartdom',
     password : 'smartdom',
     database : 'smartdom'

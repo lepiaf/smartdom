@@ -10,8 +10,9 @@ var js = [
     root+"libs/bootstrap/dist/js/bootstrap.min.js",
     root+"libs/angular/angular.min.js",
     root+"libs/angular-route/angular-route.min.js",
-    root+"libs/Chart.js/Chart.min.js",
-    root+"libs/angular-chart.js/dist/angular-chart.min.js",
+    root+"libs/angular-animate/angular-animate.min.js",
+    root+"libs/angular-sanitize/angular-sanitize.min.js",
+    root+"libs/ngToast/dist/ngToast.min.js",
     root+"libs/moment/min/moment.min.js",
     // app
     root+"js/app.js",
@@ -22,6 +23,8 @@ var js = [
 var css = [
     root+"libs/bootstrap/dist/css/bootstrap.min.css",
     root+"libs/angular-chart.js/dist/angular-chart.min.css",
+    root+"libs/ngToast/dist/ngToast.min.css",
+    root+"libs/ngToast/dist/ngToast-animations.min.css",
     root+"css/style.css"
 ];
 

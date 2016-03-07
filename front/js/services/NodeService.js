@@ -13,6 +13,9 @@ angular.module('smartdom.service.node', []).factory('NodeService', ['$http', fun
         getNodesSensorTemperature: function(nodeId, sensorId) {
             return $http.get('/api/nodes/'+nodeId+'/sensors/'+sensorId+'/temperature');
         },
+        getNodesSensorState: function(nodeId, sensorId) {
+            return $http.get('/api/nodes/'+nodeId+'/sensors/'+sensorId+'/state');
+        },
         putNodesSensorsState: function(nodeId, sensorId, state) {
             return $http.put('/api/nodes/'+nodeId+'/sensors/'+sensorId, {state: state});
         },

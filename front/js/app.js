@@ -1,6 +1,11 @@
 angular.module('smartdomApp', [
     'ngRoute',
     'appRoutes',
+
+    'ngAnimate',
+    'ngSanitize',
+    'ngToast',
+
     'MainCtrl',
     'smartdom.service.kodi',
     'smartdom.service.node',
@@ -8,7 +13,10 @@ angular.module('smartdomApp', [
     'smartdom.service.event',
     'smartdom.controller.event',
     'smartdom.controller.node',
-    'smartdom.controller.sensor',
+    'smartdom.controller.sensor'
 
-    'chart.js'
-]);
+]).config(['ngToastProvider', function(ngToastProvider) {
+    ngToastProvider.configure({
+        animation: 'fade' // or 'fade'
+    });
+}]);
