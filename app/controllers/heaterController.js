@@ -57,14 +57,14 @@ module.exports = {
             5,
             mapping[room][mode][0].sensor,
             MySensors.messageType.set,
-            20,
+            MySensors.valueType.V_STATUS,
             mapping[room][mode][0].state
         );
         var message2 = MySensors.createMessage(
             5,
             mapping[room][mode][1].sensor,
             MySensors.messageType.set,
-            20,
+            MySensors.valueType.V_STATUS,
             mapping[room][mode][1].state
         );
 
