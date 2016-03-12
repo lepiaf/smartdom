@@ -10,6 +10,8 @@ var influx         = require('influx');
 var events         = require('events');
 var MySensors      = require('./app/services/MySensors');
 var weather        = require('openweathermap');
+var schedule       = require('node-schedule');
+var heaterController = require('./app/controllers/heaterController');
 
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
@@ -70,6 +72,14 @@ sp.on('open', function(){
     eventEmitter.on('mysensors_send_message', function (message){
         sp.write(message, function(err, res) {});
     });
+
+    eventEmitter.on('mysensors_send_message_heater', function (message1, message2){
+        sp.write(message1, function(err, res) {
+            setTimeout(function(){
+                sp.write(message2, function(err, res) {});
+            }, 200);
+        });
+    });
 });
 
 var influxClientWeather = influx({
@@ -103,3 +113,47 @@ setInterval(function(){
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });
 }, 120000);
+
+/**
+ * Cron job
+ */
+var semaineStop = new schedule.RecurrenceRule();
+semaineStop.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
+semaineStop.hour = 9;
+semaineStop.minute = 0;
+schedule.scheduleJob(semaineStop, function () {
+    heaterController.changeHeaterMode("chambre", "stop");
+    heaterController.changeHeaterMode("salonGauche", "stop");
+    heaterController.changeHeaterMode("salonDroite", "stop");
+});
+
+var semaineStart = new schedule.RecurrenceRule();
+semaineStart.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
+semaineStart.hour = 19;
+semaineStart.minute = 0;
+schedule.scheduleJob(semaineStart, function () {
+    heaterController.changeHeaterMode("chambre", "stop");
+    heaterController.changeHeaterMode("salonGauche", "start");
+    heaterController.changeHeaterMode("salonDroite", "start");
+});
+
+var semaineStartNight = new schedule.RecurrenceRule();
+semaineStartNight.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
+semaineStartNight.hour = 23;
+semaineStartNight.minute = 0;
+schedule.scheduleJob(semaineStartNight, function () {
+    heaterController.changeHeaterMode("chambre", "confort");
+    heaterController.changeHeaterMode("salonGauche", "stop");
+    heaterController.changeHeaterMode("salonDroite", "stop");
+});
+
+var semaineEndNight = new schedule.RecurrenceRule();
+semaineEndNight.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
+semaineEndNight.hour = 1;
+semaineEndNight.minute = 0;
+schedule.scheduleJob(semaineEndNight, function () {
+    heaterController.changeHeaterMode("chambre", "eco");
+    heaterController.changeHeaterMode("salonGauche", "stop");
+    heaterController.changeHeaterMode("salonDroite", "stop");
+});
+

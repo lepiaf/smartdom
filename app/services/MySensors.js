@@ -312,7 +312,7 @@ var MySensors = {
             nodeId,
             childSensorId,
             messageType,
-            1,
+            0,
             subType,
             payload
         ];
