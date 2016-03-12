@@ -65,15 +65,20 @@ sp.on('open', function(){
             childSensorId: sensorData.childSensorId,
             time : new Date()
         };
+        console.info("influx point: "+JSON.stringify(influxPoint));
 
         influxClient.writePoint(sensorData.subType, influxPoint, null, function(err, response) {});
     });
 
     eventEmitter.on('mysensors_send_message', function (message){
+        console.info("mysensor message: "+ message);
         sp.write(message, function(err, res) {});
     });
 
     eventEmitter.on('mysensors_send_message_heater', function (message1, message2){
+        console.info("mysensor message heater: "+ message1);
+        console.info("mysensor message heater: "+ message2);
+
         sp.write(message1, function(err, res) {
             setTimeout(function(){
                 sp.write(message2, function(err, res) {});
@@ -109,6 +114,8 @@ setInterval(function(){
         if (data.rain && data.rain['3h']) {
             influxPoint.rain =  data.rain['3h'];
         }
+
+        console.info("weather point: "+JSON.stringify(influxPoint));
 
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });

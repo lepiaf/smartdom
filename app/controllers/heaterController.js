@@ -58,6 +58,7 @@ module.exports = {
 
     },
     changeHeaterMode: function(room, mode) {
+        console.info("Change heater mode to "+mode+" for "+room);
         var message1 = MySensors.createMessage(
             5,
             module.exports.mapping[room][mode][0].sensor,
@@ -79,6 +80,8 @@ module.exports = {
             room: room,
             mode: mode
         };
+
+        console.info("Heater point: "+ JSON.stringify(influxPoint));
 
         module.exports.influxClient.writePoint("heater", influxPoint, null, function(err, response) {});
     },
