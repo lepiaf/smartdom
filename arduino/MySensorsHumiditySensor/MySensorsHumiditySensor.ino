@@ -1,3 +1,7 @@
+#include <MyTransportNRF24.h>
+#include <MyHwATMega328.h>
+#include <MySensor.h>
+
 #include <SPI.h>
 #include <MySensor.h>
 #include <DHT.h>
@@ -7,7 +11,10 @@
 #define HUMIDITY_SENSOR_DIGITAL_PIN 3
 unsigned long SLEEP_TIME = 60000; // Sleep time between reads (in milliseconds)
 
-MySensor gw;
+MyTransportNRF24 radio(RF24_CE_PIN, RF24_CS_PIN, RF24_PA_LEVEL_GW);  
+MyHwATMega328 hw;
+MySensor gw(radio, hw);
+
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 DHT dht;
