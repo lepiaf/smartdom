@@ -1,0 +1,25 @@
+module.exports = {
+    port: 9090,
+    database : 'mongodb://localhost/smartdom',
+    openweathermap: {
+        key: 'openweathermap api key',
+        city: '6451962',
+        interval: 120000
+    },
+    arduino: "/dev/ttyACM0",
+    influxdb: {
+        weather: {
+            host: 'localhost',
+            username: 'weather',
+            password: 'weather',
+            database: 'weather'
+        },
+        smartdom: {
+            host: 'localhost',
+            username: 'smartdom',
+            password: 'smartdom',
+            database: 'smartdom'
+        }
+    },
+    kodi: 'http://192.168.1.1'
+};

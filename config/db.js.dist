@@ -1,7 +1,0 @@
-module.exports = {
-    url : 'mongodb://localhost/smartdom',
-    openweathermap: {
-        key: 'openweathermap api key',
-        city: '6451962'
-    }
-};

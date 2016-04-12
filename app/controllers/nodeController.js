@@ -26,8 +26,8 @@ module.exports = {
                 var message = MySensors.createMessage(
                     req.params.node,
                     sensor.sensorId,
-                    MySensors.messageType.set,
-                    20,
+                    MySensors.message.set,
+                    MySensors.presentation.S_IR,
                     req.body.button
                 );
 
@@ -63,8 +63,8 @@ module.exports = {
                 var message = MySensors.createMessage(
                     req.params.node,
                     sensor.sensorId,
-                    MySensors.messageType.req,
-                    MySensors.valueType.V_STATUS,
+                    MySensors.message.req,
+                    MySensors.value.V_STATUS,
                     req.body.state
                 );
 

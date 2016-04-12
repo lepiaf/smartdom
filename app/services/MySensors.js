@@ -8,15 +8,14 @@
 
 var MySensors = {
     version: 1.5,
-
-    messageType: {
+    message: {
         presentation: 0,
         set: 1,
         req: 2,
         internal: 3,
         stream: 4
     },
-    valueType: {
+    value: {
         V_TEMP: 0,
         V_HUM: 1,
         V_STATUS: 2,
@@ -67,214 +66,78 @@ var MySensors = {
         V_HVAC_SETPOINT_HEAT: 45,
         V_HVAC_FLOW_MODE: 46
     },
-    constant: {
-        messageType: [
-            {
-                value: 0,
-                label: "presentation",
-                subType: [
-                    {label: "S_DOOR", value: 0, allowedSubType: []},
-                    {label: "S_MOTION", value: 1, allowedSubType: []},
-                    {label: "S_SMOKE", value: 2, allowedSubType: []},
-                    {label: "S_LIGHT", value: 3, allowedSubType: []},
-                    {label: "S_BINARY", value: 3, allowedSubType: []},
-                    {label: "S_DIMMER", value: 4, allowedSubType: []},
-                    {label: "S_COVER", value: 5, allowedSubType: []},
-                    {label: "S_TEMP", value: 6, allowedSubType: []},
-                    {label: "S_HUM", value: 7, allowedSubType: []},
-                    {label: "S_BARO", value: 8, allowedSubType: []},
-                    {label: "S_WIND", value: 9, allowedSubType: []},
-                    {label: "S_RAIN", value: 10, allowedSubType: []},
-                    {label: "S_UV", value: 11, allowedSubType: []},
-                    {label: "S_WEIGHT", value: 12, allowedSubType: []},
-                    {label: "S_POWER", value: 13, allowedSubType: []},
-                    {label: "S_HEATER", value: 14, allowedSubType: []},
-                    {label: "S_DISTANCE", value: 15, allowedSubType: []},
-                    {label: "S_LIGHT_LEVEL", value: 16, allowedSubType: []},
-                    {label: "S_ARDUINO_NODE", value: 17, allowedSubType: []},
-                    {label: "S_ARDUINO_REPEATER_NODE", value: 18, allowedSubType: []},
-                    {label: "S_LOCK", value: 19, allowedSubType: []},
-                    {label: "S_IR", value: 20, allowedSubType: []},
-                    {label: "S_WATER", value: 21, allowedSubType: []},
-                    {label: "S_AIR_QUALITY", value: 22, allowedSubType: []},
-                    {label: "S_CUSTOM", value: 23, allowedSubType: []},
-                    {label: "S_DUST", value: 24, allowedSubType: []},
-                    {label: "S_SCENE_CONTROLLER", value: 25, allowedSubType: []},
-                    {label: "S_RGB_LIGHT", value: 26, allowedSubType: []},
-                    {label: "S_RGBW_LIGHT", value: 27, allowedSubType: []},
-                    {label: "S_COLOR_SENSOR", value: 28, allowedSubType: []},
-                    {label: "S_HVAC", value: 29, allowedSubType: []},
-                    {label: "S_MULTIMETER", value: 30, allowedSubType: []},
-                    {label: "S_SPRINKLER", value: 31, allowedSubType: []},
-                    {label: "S_WATER_LEAK", value: 32, allowedSubType: []},
-                    {label: "S_SOUND", value: 33, allowedSubType: []},
-                    {label: "S_VIBRATION", value: 34, allowedSubType: []},
-                    {label: "S_MOISTURE", value: 35, allowedSubType: []}
-                ]
-            },
-            {
-                value: 1,
-                label: "set",
-                subType: [
-                    {label: "V_TEMP", value: 0},
-                    {label: "V_HUM", value: 1},
-                    {label: "V_STATUS", value: 2},
-                    {label: "V_LIGHT", value: 2},
-                    {label: "V_PERCENTAGE", value: 3},
-                    {label: "V_DIMMER", value: 3},
-                    {label: "V_PRESSURE", value: 4},
-                    {label: "V_FORECAST", value: 5},
-                    {label: "V_RAIN", value: 6},
-                    {label: "V_RAINRATE", value: 7},
-                    {label: "V_WIND", value: 8},
-                    {label: "V_GUST", value: 9},
-                    {label: "V_DIRECTION", value: 10},
-                    {label: "V_UV", value: 11},
-                    {label: "V_WEIGHT", value: 12},
-                    {label: "V_DISTANCE", value: 13},
-                    {label: "V_IMPEDANCE", value: 14},
-                    {label: "V_ARMED", value: 15},
-                    {label: "V_TRIPPED", value: 16},
-                    {label: "V_WATT", value: 17},
-                    {label: "V_KWH", value: 18},
-                    {label: "V_SCENE_ON", value: 19},
-                    {label: "V_SCENE_OFF", value: 20},
-                    {label: "V_HVAC_FLOW_STATE", value: 21},
-                    {label: "V_HVAC_SPEED", value: 22},
-                    {label: "V_LIGHT_LEVEL", value: 23},
-                    {label: "V_VAR1", value: 24},
-                    {label: "V_VAR2", value: 25},
-                    {label: "V_VAR3", value: 26},
-                    {label: "V_VAR4", value: 27},
-                    {label: "V_VAR5", value: 28},
-                    {label: "V_UP", value: 29},
-                    {label: "V_DOWN", value: 30},
-                    {label: "V_STOP", value: 31},
-                    {label: "V_IR_SEND", value: 32},
-                    {label: "V_IR_RECEIVE", value: 33},
-                    {label: "V_FLOW", value: 34},
-                    {label: "V_VOLUME", value: 35},
-                    {label: "V_LOCK_STATUS", value: 36},
-                    {label: "V_LEVEL", value: 37},
-                    {label: "V_VOLTAGE", value: 38},
-                    {label: "V_CURRENT", value: 39},
-                    {label: "V_RGB", value: 40},
-                    {label: "V_RGBW", value: 41},
-                    {label: "V_ID", value: 42},
-                    {label: "V_UNIT_PREFIX", value: 43},
-                    {label: "V_HVAC_SETPOINT_COOL", value: 44},
-                    {label: "V_HVAC_SETPOINT_HEAT", value: 45},
-                    {label: "V_HVAC_FLOW_MODE", value: 46}
-                ]
-            },
-            {
-                value: 2,
-                label: "req",
-                subType: [
-                    {label: "V_TEMP", value: 0},
-                    {label: "V_HUM", value: 1},
-                    {label: "V_STATUS", value: 2},
-                    {label: "V_LIGHT", value: 2},
-                    {label: "V_PERCENTAGE", value: 3},
-                    {label: "V_DIMMER", value: 3},
-                    {label: "V_PRESSURE", value: 4},
-                    {label: "V_FORECAST", value: 5},
-                    {label: "V_RAIN", value: 6},
-                    {label: "V_RAINRATE", value: 7},
-                    {label: "V_WIND", value: 8},
-                    {label: "V_GUST", value: 9},
-                    {label: "V_DIRECTION", value: 10},
-                    {label: "V_UV", value: 11},
-                    {label: "V_WEIGHT", value: 12},
-                    {label: "V_DISTANCE", value: 13},
-                    {label: "V_IMPEDANCE", value: 14},
-                    {label: "V_ARMED", value: 15},
-                    {label: "V_TRIPPED", value: 16},
-                    {label: "V_WATT", value: 17},
-                    {label: "V_KWH", value: 18},
-                    {label: "V_SCENE_ON", value: 19},
-                    {label: "V_SCENE_OFF", value: 20},
-                    {label: "V_HVAC_FLOW_STATE", value: 21},
-                    {label: "V_HVAC_SPEED", value: 22},
-                    {label: "V_LIGHT_LEVEL", value: 23},
-                    {label: "V_VAR1", value: 24},
-                    {label: "V_VAR2", value: 25},
-                    {label: "V_VAR3", value: 26},
-                    {label: "V_VAR4", value: 27},
-                    {label: "V_VAR5", value: 28},
-                    {label: "V_UP", value: 29},
-                    {label: "V_DOWN", value: 30},
-                    {label: "V_STOP", value: 31},
-                    {label: "V_IR_SEND", value: 32},
-                    {label: "V_IR_RECEIVE", value: 33},
-                    {label: "V_FLOW", value: 34},
-                    {label: "V_VOLUME", value: 35},
-                    {label: "V_LOCK_STATUS", value: 36},
-                    {label: "V_LEVEL", value: 37},
-                    {label: "V_VOLTAGE", value: 38},
-                    {label: "V_CURRENT", value: 39},
-                    {label: "V_RGB", value: 40},
-                    {label: "V_RGBW", value: 41},
-                    {label: "V_ID", value: 42},
-                    {label: "V_UNIT_PREFIX", value: 43},
-                    {label: "V_HVAC_SETPOINT_COOL", value: 44},
-                    {label: "V_HVAC_SETPOINT_HEAT", value: 45},
-                    {label: "V_HVAC_FLOW_MODE", value: 46}
-                ]
-            },
-            {
-                value: 3,
-                label: "internal",
-                subType: [
-                    {label: "I_BATTERY_LEVEL", value: 0},
-                    {label: "I_TIME", value: 1},
-                    {label: "I_VERSION", value: 2},
-                    {label: "I_ID_REQUEST", value: 3},
-                    {label: "I_ID_RESPONSE", value: 4},
-                    {label: "I_INCLUSION_MODE", value: 5},
-                    {label: "I_CONFIG", value: 6},
-                    {label: "I_FIND_PARENT", value: 7},
-                    {label: "I_FIND_PARENT_RESPONSE", value: 8},
-                    {label: "I_LOG_MESSAGE", value: 9},
-                    {label: "I_CHILDREN	10", value: 10},
-                    {label: "I_SKETCH_NAME", value: 11},
-                    {label: "I_SKETCH_VERSION", value: 12},
-                    {label: "I_REBOOT", value: 13},
-                    {label: "I_GATEWAY_READY", value: 14},
-                    {label: "I_REQUEST_SIGNING", value: 15},
-                    {label: "I_GET_NONCE", value: 16},
-                    {label: "I_GET_NONCE_RESPONSE", value: 17}
-                ]
-            },
-            {
-                value: 4,
-                label: "stream",
-                subType: []
-            }
-        ]
+    presentation: {
+        S_DOOR: 0,
+        S_MOTION: 1,
+        S_SMOKE: 2,
+        S_LIGHT: 3,
+        S_BINARY: 3,
+        S_DIMMER: 4,
+        S_COVER: 5,
+        S_TEMP: 6,
+        S_HUM: 7,
+        S_BARO: 8,
+        S_WIND: 9,
+        S_RAIN: 10,
+        S_UV: 11,
+        S_WEIGHT: 12,
+        S_POWER: 13,
+        S_HEATER: 14,
+        S_DISTANCE: 15,
+        S_LIGHT_LEVEL: 16,
+        S_ARDUINO_NODE: 17,
+        S_ARDUINO_REPEATER_NODE: 18,
+        S_LOCK: 19,
+        S_IR: 20,
+        S_WATER: 21,
+        S_AIR_QUALITY: 22,
+        S_CUSTOM: 23,
+        S_DUST: 24,
+        S_SCENE_CONTROLLER: 25,
+        S_RGB_LIGHT: 26,
+        S_RGBW_LIGHT: 27,
+        S_COLOR_SENSOR: 28,
+        S_HVAC: 29,
+        S_MULTIMETER: 30,
+        S_SPRINKLER: 31,
+        S_WATER_LEAK: 32,
+        S_SOUND: 33,
+        S_VIBRATION: 34,
+        S_MOISTURE: 35
+    },
+    internal: {
+        I_BATTERY_LEVEL: 0,
+        I_TIME: 1,
+        I_VERSION: 2,
+        I_ID_REQUEST: 3,
+        I_ID_RESPONSE: 4,
+        I_INCLUSION_MODE: 5,
+        I_CONFIG: 6,
+        I_FIND_PARENT: 7,
+        I_FIND_PARENT_RESPONSE: 8,
+        I_LOG_MESSAGE: 9,
+        I_CHILDREN: 10,
+        I_SKETCH_NAME: 11,
+        I_SKETCH_VERSION: 12,
+        I_REBOOT: 13,
+        I_GATEWAY_READY: 14,
+        I_REQUEST_SIGNING: 15,
+        I_GET_NONCE: 16,
+        I_GET_NONCE_RESPONSE: 17
     },
     getLabelType: function (valueType) {
-        for (var i = 0; i < 5; i++) {
-            if (this.constant.messageType[i].value === parseInt(valueType)) {
-                return this.constant.messageType[i].label;
+        for (var label in this.message) {
+            if (this.message.hasOwnProperty(label) && this.message[label] === parseInt(valueType)) {
+                return label;
             }
         }
 
         return valueType;
     },
-    getLabelSubType: function (valueType, valueSubtype) {
-        var arraySubType = [];
-
-        for (var e = 0; e < 5; e++) {
-            if (this.constant.messageType[e].value === parseInt(valueType)) {
-                arraySubType = this.constant.messageType[e].subType;
-            }
-        }
-
-
-        for (var i = 0; i < arraySubType.length; i++) {
-            if (arraySubType[i].value === parseInt(valueSubtype)) {
-                return arraySubType[i].label;
+    getLabelSubType: function (valueSubtype) {
+        for (var label in this.value) {
+            if (this.value.hasOwnProperty(label) && this.value[label] === parseInt(valueSubtype)) {
+                return label;
             }
         }
 
@@ -287,12 +150,13 @@ var MySensors = {
      */
     parse: function (data) {
         var splitedData = data.split(";");
+
         return {
             nodeId: splitedData[0],
             childSensorId: splitedData[1],
             messageType: this.getLabelType(splitedData[2]),
             ack: splitedData[3],
-            subType: this.getLabelSubType(splitedData[2], splitedData[4]),
+            subType: this.getLabelSubType(splitedData[4]),
             payload: splitedData[5]
         }
     },
@@ -304,15 +168,18 @@ var MySensors = {
      * @param messageType
      * @param subType
      * @param payload
+     * @param ack
      *
      * @returns {string}
      */
-    createMessage: function (nodeId, childSensorId, messageType, subType, payload) {
+    createMessage: function (nodeId, childSensorId, messageType, subType, payload, ack) {
+        ack = typeof ack !== 'undefined' ? ack : 0;
+
         var msgObj = [
             nodeId,
             childSensorId,
             messageType,
-            0,
+            ack,
             subType,
             payload
         ];

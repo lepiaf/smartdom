@@ -12,21 +12,18 @@ var MySensors      = require('./app/services/MySensors');
 var weather        = require('openweathermap');
 var schedule       = require('node-schedule');
 var heaterController = require('./app/controllers/heaterController');
+var config = require('./config/config');
 
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
-    // or single-host configuration
-    host : '192.168.1.247',
-    username : 'smartdom',
-    password : 'smartdom',
-    database : 'smartdom'
+    host : config.influxdb.smartdom.host,
+    username : config.influxdb.smartdom.username,
+    password : config.influxdb.smartdom.password,
+    database : config.influxdb.smartdom.database
 });
-// config files
-var db = require('./config/db');
 
-var port = 9090; // set our port
 require('mongoose-double')(mongoose);
-mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
+mongoose.connect(config.database); // connect to our mongoDB database (commented out after you enter in your own credentials)
 
 // get all data/stuff of the body (POST) parameters
 app.use(bodyParser.json()); // parse application/json
@@ -40,12 +37,12 @@ app.use(express.static(__dirname + '/public')); // set the static files location
 require('./app/routes')(app, eventEmitter, influxClient); // pass our application into our routes
 
 // start app ===============================================
-app.listen(port);
-console.log('Smartdom is ready on port:' + port);
+app.listen(config.port);
+console.log('Smartdom is ready on port: ' + config.port);
 exports = module.exports = app;
 
-
-var sp = new SerialPort("/dev/ttyACM0", {
+// handle message from mysensors gateway ===================
+var sp = new SerialPort(config.arduino, {
     parser: serialport.parsers.readline("\n"),
     baudrate: 115200
 }, true);
@@ -56,6 +53,7 @@ sp.on('open', function(){
         if (sensorData.messageType === "internal") {
             return;
         }
+
         sensorData.payload = parseFloat(sensorData.payload);
 
         var influxPoint = {
@@ -87,18 +85,18 @@ sp.on('open', function(){
     });
 });
 
+// handle message from weather api =========================
 var influxClientWeather = influx({
-    // or single-host configuration
-    host : 'localhost',
-    username : 'weather',
-    password : 'weather',
-    database : 'weather'
+    host : config.influxdb.weather.host,
+    username : config.influxdb.weather.username,
+    password : config.influxdb.weather.password,
+    database : config.influxdb.weather.database
 });
 
-weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: db.openweathermap.key});
+weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: config.openweathermap.key});
 
 setInterval(function(){
-    weather.now({id: db.openweathermap.city}, function (err, data) {
+    weather.now({id: config.openweathermap.city}, function (err, data) {
         var influxPoint = {
             main: data.weather[0].main,
             description: data.weather[0].description,
@@ -111,56 +109,8 @@ setInterval(function(){
             time : new Date()
         };
 
-        if (data.rain && data.rain['3h']) {
-            influxPoint.rain =  data.rain['3h'];
-        }
-
         console.info("weather point: "+JSON.stringify(influxPoint));
 
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });
-}, 120000);
-
-/**
- * Cron job
- */
-var semaineStop = new schedule.RecurrenceRule();
-semaineStop.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
-semaineStop.hour = 9;
-semaineStop.minute = 0;
-schedule.scheduleJob(semaineStop, function () {
-    heaterController.changeHeaterMode("chambre", "stop");
-    heaterController.changeHeaterMode("salonGauche", "stop");
-    heaterController.changeHeaterMode("salonDroite", "stop");
-});
-
-var semaineStart = new schedule.RecurrenceRule();
-semaineStart.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
-semaineStart.hour = 19;
-semaineStart.minute = 0;
-schedule.scheduleJob(semaineStart, function () {
-    heaterController.changeHeaterMode("chambre", "stop");
-    heaterController.changeHeaterMode("salonGauche", "start");
-    heaterController.changeHeaterMode("salonDroite", "start");
-});
-
-var semaineStartNight = new schedule.RecurrenceRule();
-semaineStartNight.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
-semaineStartNight.hour = 23;
-semaineStartNight.minute = 0;
-schedule.scheduleJob(semaineStartNight, function () {
-    heaterController.changeHeaterMode("chambre", "confort");
-    heaterController.changeHeaterMode("salonGauche", "stop");
-    heaterController.changeHeaterMode("salonDroite", "stop");
-});
-
-var semaineEndNight = new schedule.RecurrenceRule();
-semaineEndNight.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
-semaineEndNight.hour = 1;
-semaineEndNight.minute = 0;
-schedule.scheduleJob(semaineEndNight, function () {
-    heaterController.changeHeaterMode("chambre", "eco");
-    heaterController.changeHeaterMode("salonGauche", "stop");
-    heaterController.changeHeaterMode("salonDroite", "stop");
-});
-
+}, config.openweathermap.interval);
