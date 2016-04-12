@@ -3,6 +3,7 @@ front/libs/
 public/dist/
 public/libs/
 config/config.js
+config/nodes.js
 .idea
 
 !.gitkeep
