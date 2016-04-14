@@ -70,7 +70,9 @@ module.exports = {
 
         var query = 'SELECT last("mode") FROM "heater" WHERE "room" = \''+room+'\'';
         module.exports.influxClient.query(query, function(err, results) {
-            res.send(results[0][0]);
+            if (results !== undefined && results.length > 0 && results[0].length > 0) {
+                res.send(results[0][0]);
+            }
         });
     },
     changeHeaterMode: function(room, mode) {

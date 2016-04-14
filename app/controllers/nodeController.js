@@ -1,40 +1,28 @@
-var Node = require('../models/node');
 var _ = require('lodash');
 var async = require('async');
 var MySensors = require('../services/MySensors');
+var nodesDb = require('../../config/nodes.js');
 
 module.exports = {
     influxClient: null,
     eventEmitter: null,
     putNodesSensorsRemote: function (req, res) {
-        Node.findOne({nodeId: req.params.node}, function(err, result) {
+        nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Sensor not found"});
             }
 
-            async.each(result.childSensors, function (sensor, callback) {
-                if (sensor.sensorId == req.params.sensor) {
-                    return callback(sensor);
-                }
+            var message = MySensors.createMessage(
+                req.params.node,
+                sensor.id,
+                MySensors.message.set,
+                MySensors.presentation.S_IR,
+                req.body.button
+            );
 
-                callback();
-            }, function (sensor) {
-                if (!sensor) {
-                    return res.status(404).send({code: 404, message: "Sensor not found"});
-                }
+            module.exports.eventEmitter.emit('mysensors_send_message', message);
 
-                var message = MySensors.createMessage(
-                    req.params.node,
-                    sensor.sensorId,
-                    MySensors.message.set,
-                    MySensors.presentation.S_IR,
-                    req.body.button
-                );
-
-                module.exports.eventEmitter.emit('mysensors_send_message', message);
-
-                res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.button});
-            });
+            res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.button});
         });
     },
     /**
@@ -44,34 +32,22 @@ module.exports = {
      * @param res
      */
     putNodesSensorsState: function (req, res) {
-        Node.findOne({nodeId: req.params.node}, function(err, result) {
+        nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Sensor not found"});
             }
 
-            async.each(result.childSensors, function (sensor, callback) {
-                if (sensor.sensorId == req.params.sensor) {
-                    return callback(sensor);
-                }
+            var message = MySensors.createMessage(
+                req.params.node,
+                sensor.id,
+                MySensors.message.req,
+                MySensors.value.V_STATUS,
+                req.body.state
+            );
 
-                callback();
-            }, function (sensor) {
-                if (!sensor) {
-                    return res.status(404).send({code: 404, message: "Sensor not found"});
-                }
+            module.exports.eventEmitter.emit('mysensors_send_message', message);
 
-                var message = MySensors.createMessage(
-                    req.params.node,
-                    sensor.sensorId,
-                    MySensors.message.req,
-                    MySensors.value.V_STATUS,
-                    req.body.state
-                );
-
-                module.exports.eventEmitter.emit('mysensors_send_message', message);
-
-                res.send({message: "State changed", node: req.params.node, sensor: sensor.sensorId, state: req.body.state});
-            });
+            res.send({message: "State changed", node: req.params.node, sensor: sensor.id, state: req.body.state});
         });
     },
     /**
@@ -81,12 +57,12 @@ module.exports = {
      * @param res
      */
     cgetNodesSensors: function(req, res) {
-        Node.findOne({nodeId: req.params.nodeId}, function(err, result) {
+        nodesDb.repository.findNode(req.params.node, function(err, node) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Node not found"});
             }
 
-            res.send(result.childSensors);
+            res.send(node.sensors);
         });
     },
     /**
@@ -96,24 +72,12 @@ module.exports = {
      * @param res
      */
     getNodesSensors: function(req, res) {
-        Node.findOne({nodeId: req.params.node}, function(err, result) {
+        nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Sensor not found"});
             }
 
-            async.each(result.childSensors, function (sensor, callback) {
-                if (sensor.sensorId == req.params.sensor) {
-                    return callback(sensor);
-                }
-
-                callback();
-            }, function (sensor) {
-                if (!sensor) {
-                    return res.status(404).send({code: 404, message: "Sensor not found"});
-                }
-
-                res.send(sensor);
-            });
+            res.send(sensor);
         });
     },
     /**
@@ -123,13 +87,9 @@ module.exports = {
      * @param res
      */
     cgetNodes: function(req, res) {
-        Node.find(function(err, result) {
-            if (err) {
-                res.send(err);
-            }
-
-            res.send(result);
-        });
+       nodesDb.repository.findAll(function(nodes) {
+           res.send(nodes);
+       });
     },
     /**
      * Get one node
@@ -138,47 +98,12 @@ module.exports = {
      * @param res
      */
     getNodes: function(req, res) {
-        Node.findOne({nodeId: req.params.nodeId},function(err, result) {
+        nodesDb.repository.findNode(req.params.node, function(err, node) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Node not found"});
             }
 
-            res.send(result);
-        });
-    },
-    /**
-     * Create node
-     *
-     * @param req
-     * @param res
-     */
-    postNodes: function(req, res) {
-        var node = new Node(req.body);
-        node.save(function(err, data) {
-            if (err) {
-                res.send(err);
-            }
-
-            res.send({id: data.id});
-        });
-    },
-    /**
-     * Update node
-     *
-     * @param req
-     * @param res
-     */
-    putNodes: function(req, res) {
-        Node.findOne({nodeId: req.params.nodeId}, function(err, result) {
-            if (err) {
-                res.send(err);
-            }
-
-            _.merge(result, req.body);
-
-            result.save(function(err, data) {
-                res.send(data);
-            });
+            res.send(node);
         });
     },
     /**
@@ -187,27 +112,16 @@ module.exports = {
      * @param res
      */
     getNodesSensorsTemperature: function(req, res) {
-        var self = this;
-        Node.findOne({nodeId: req.params.node}, function(err, result) {
+        nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Node not found"});
             }
 
-            async.each(result.childSensors, function (sensor, callback) {
-                if (sensor.sensorId == req.params.sensor) {
-                    return callback(sensor);
-                }
-
-                callback();
-            }, function (sensor) {
-                if (!sensor) {
-                    return res.status(404).send({code: 404, message: "Sensor not found"});
-                }
-                
-                var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1h';
-                module.exports.influxClient.query(query, function(err, results) {
+            var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.sensorId+'\' AND time > now() - 1h';
+            module.exports.influxClient.query(query, function(err, results) {
+                if (results !== undefined && results.length > 0 && results[0].length > 0) {
                     res.send(results[0][0]);
-                });
+                }
             });
         });
     },
@@ -218,26 +132,17 @@ module.exports = {
      */
     getNodesSensorsState: function(req, res) {
         var self = this;
-        Node.findOne({nodeId: req.params.node}, function(err, result) {
+
+        nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
-                res.send(err);
+                return res.status(404).send({code: 404, message: "Node not found"});
             }
 
-            async.each(result.childSensors, function (sensor, callback) {
-                if (sensor.sensorId == req.params.sensor) {
-                    return callback(sensor);
-                }
-
-                callback();
-            }, function (sensor) {
-                if (!sensor) {
-                    return res.status(404).send({code: 404, message: "Sensor not found"});
-                }
-
-                var query = 'SELECT last("payload"), nodeId, childSensorId FROM "V_STATUS" WHERE "childSensorId" = \''+sensor.sensorId+'\' and "nodeId" = \''+req.params.node+'\'';
-                module.exports.influxClient.query(query, function(err, results) {
+            var query = 'SELECT last("payload"), nodeId, childSensorId FROM "V_STATUS" WHERE "childSensorId" = \''+sensor.id+'\' and "nodeId" = \''+req.params.node+'\'';
+            module.exports.influxClient.query(query, function(err, results) {
+                if (results !== undefined && results.length > 0 && results[0].length > 0) {
                     res.send(results[0][0]);
-                });
+                }
             });
         });
     }

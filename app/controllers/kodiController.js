@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('../../config/db.js');
+var config = require('../../config/config.js');
 
 /**
  * Act as proxy

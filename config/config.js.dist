@@ -1,6 +1,4 @@
 module.exports = {
-    port: 9090,
-    database : 'mongodb://localhost/smartdom',
     openweathermap: {
         key: 'openweathermap api key',
         city: '6451962',

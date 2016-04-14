@@ -1,7 +1,6 @@
 // modules =================================================
 var express        = require('express');
 var app            = express();
-var mongoose       = require('mongoose');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var serialport     = require("serialport");
@@ -21,9 +20,6 @@ var influxClient = influx({
     password : config.influxdb.smartdom.password,
     database : config.influxdb.smartdom.database
 });
-
-require('mongoose-double')(mongoose);
-mongoose.connect(config.database); // connect to our mongoDB database (commented out after you enter in your own credentials)
 
 // get all data/stuff of the body (POST) parameters
 app.use(bodyParser.json()); // parse application/json
@@ -50,10 +46,6 @@ var sp = new SerialPort(config.arduino, {
 sp.on('open', function(){
     sp.on('data', function(data) {
         var sensorData = MySensors.parse(data);
-        if (sensorData.messageType === "internal") {
-            return;
-        }
-
         sensorData.payload = parseFloat(sensorData.payload);
 
         var influxPoint = {
