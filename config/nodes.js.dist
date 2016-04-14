@@ -140,6 +140,14 @@ var nodes =  [
 ];
 
 var repository = {
+    getHeaterNode: function() {
+        var currentNode;
+        repository.findNode(5, function(err, node) {
+            currentNode = err ? err : node;
+        });
+
+        return currentNode;
+    },
     findSensor: function(nodeId, sensorId, callback) {
         repository.findNode(nodeId, function(err, node) {
             for (var idx in node.sensors) {
