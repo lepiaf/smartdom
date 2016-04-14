@@ -36,7 +36,7 @@ require('./app/routes')(app, eventEmitter, influxClient); // pass our applicatio
 app.listen(config.port);
 console.log('Smartdom is ready on port: ' + config.port);
 exports = module.exports = app;
-
+/**
 // handle message from mysensors gateway ===================
 var sp = new SerialPort(config.arduino, {
     parser: serialport.parsers.readline("\n"),
@@ -106,3 +106,4 @@ setInterval(function(){
         influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
     });
 }, config.openweathermap.interval);
+*/

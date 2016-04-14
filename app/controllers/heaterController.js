@@ -1,13 +1,6 @@
 var MySensors = require('../services/MySensors');
-
-var node = {
-    id: 5,
-    sensor: {
-        chambre: [1,2],
-        salonGauche: [3,4],
-        salonDroite: [5,6]
-    }
-};
+var nodeDb = require('../../config/nodes.js');
+var node = nodeDb.repository.getHeaterNode();
 
 module.exports = {
     info: node,
@@ -16,44 +9,44 @@ module.exports = {
     mapping: {
         chambre: {
             eco: [
-                {node: node.id, sensor: node.sensor.chambre[0], state: 0},
-                {node: node.id, sensor: node.sensor.chambre[1], state: 1}
+                {node: node.id, sensor: node.mapping.chambre[0], state: 0},
+                {node: node.id, sensor: node.mapping.chambre[1], state: 1}
             ],
             comfy: [
-                {node: node.id, sensor: node.sensor.chambre[0], state: 1},
-                {node: node.id, sensor: node.sensor.chambre[1], state: 0}
+                {node: node.id, sensor: node.mapping.chambre[0], state: 1},
+                {node: node.id, sensor: node.mapping.chambre[1], state: 0}
             ],
             stop: [
-                {node: node.id, sensor: node.sensor.chambre[0], state: 0},
-                {node: node.id, sensor: node.sensor.chambre[1], state: 0}
+                {node: node.id, sensor: node.mapping.chambre[0], state: 0},
+                {node: node.id, sensor: node.mapping.chambre[1], state: 0}
             ]
         },
         salonGauche: {
             eco: [
-                {node: node.id, sensor: node.sensor.salonGauche[0], state: 0},
-                {node: node.id, sensor: node.sensor.salonGauche[1], state: 1}
+                {node: node.id, sensor: node.mapping.salonGauche[0], state: 0},
+                {node: node.id, sensor: node.mapping.salonGauche[1], state: 1}
             ],
             comfy: [
-                {node: node.id, sensor: node.sensor.salonGauche[0], state: 1},
-                {node: node.id, sensor: node.sensor.salonGauche[1], state: 0}
+                {node: node.id, sensor: node.mapping.salonGauche[0], state: 1},
+                {node: node.id, sensor: node.mapping.salonGauche[1], state: 0}
             ],
             stop: [
-                {node: node.id, sensor: node.sensor.salonGauche[0], state: 0},
-                {node: node.id, sensor: node.sensor.salonGauche[1], state: 0}
+                {node: node.id, sensor: node.mapping.salonGauche[0], state: 0},
+                {node: node.id, sensor: node.mapping.salonGauche[1], state: 0}
             ]
         },
         salonDroite: {
             eco: [
-                {node: node.id, sensor: node.sensor.salonDroite[0], state: 0},
-                {node: node.id, sensor: node.sensor.salonDroite[1], state: 1}
+                {node: node.id, sensor: node.mapping.salonDroite[0], state: 0},
+                {node: node.id, sensor: node.mapping.salonDroite[1], state: 1}
             ],
             comfy: [
-                {node: node.id, sensor: node.sensor.salonDroite[0], state: 1},
-                {node: node.id, sensor: node.sensor.salonDroite[1], state: 0}
+                {node: node.id, sensor: node.mapping.salonDroite[0], state: 1},
+                {node: node.id, sensor: node.mapping.salonDroite[1], state: 0}
             ],
             stop: [
-                {node: node.id, sensor: node.sensor.salonDroite[0], state: 0},
-                {node: node.id, sensor: node.sensor.salonDroite[1], state: 0}
+                {node: node.id, sensor: node.mapping.salonDroite[0], state: 0},
+                {node: node.id, sensor: node.mapping.salonDroite[1], state: 0}
             ]
         }
     },
