@@ -1,4 +1,5 @@
 module.exports = {
+    port: 9090,
     openweathermap: {
         key: 'openweathermap api key',
         city: '6451962',

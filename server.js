@@ -43,6 +43,11 @@ var sp = new SerialPort(config.arduino, {
     baudrate: 115200
 }, true);
 
+sp.on('error', function(data){
+    // do nothing
+    console.log(data);
+});
+
 sp.on('open', function(){
     sp.on('data', function(data) {
         var sensorData = MySensors.parse(data);
