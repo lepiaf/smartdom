@@ -1,6 +1,6 @@
 angular.module('MainCtrl', []).controller('MainController', [
-    '$scope', 'NodeService', 'KodiService', 'HeaterService', 'ngToast',
-    function($scope, NodeService, KodiService, HeaterService, ngToast) {
+    '$scope', 'NodeService', 'KodiService', 'HeaterService', 'ngToast', 'AuthenticationService', '$window', '$location',
+    function($scope, NodeService, KodiService, HeaterService, ngToast, AuthenticationService, $window, $location) {
 
         $scope.temperature = {
             salon: 0,
@@ -14,6 +14,10 @@ angular.module('MainCtrl', []).controller('MainController', [
         }
 
         $scope.init = function () {
+            if (!$window.sessionStorage.token) {
+                return;
+            }
+
             NodeService.getNodesSensorTemperature(4,5).then(function(res){
                 $scope.temperature.salon = res.data.last;
             });
@@ -33,7 +37,6 @@ angular.module('MainCtrl', []).controller('MainController', [
             HeaterService.resource.getHeaterMode("salonDroite").then(function(res) {
                 $scope.heater.salonDroite = res.data.last;
             });
-
         }
 
         $scope.getClassByRoom = function(room) {
@@ -75,5 +78,10 @@ angular.module('MainCtrl', []).controller('MainController', [
         setInterval(function(){
             $scope.init();
         }, 5000);
+
+        $scope.logout = function() {
+            delete $window.sessionStorage.token;
+            $location.path("/login");
+        }
 
 }]);

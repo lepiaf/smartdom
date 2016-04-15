@@ -101,21 +101,25 @@ var influxClientWeather = influx({
 weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: config.openweathermap.key});
 
 setInterval(function(){
-    weather.now({id: config.openweathermap.city}, function (err, data) {
-        var influxPoint = {
-            main: data.weather[0].main,
-            description: data.weather[0].description,
-            icon: data.weather[0].icon,
-            temp: data.main.temp,
-            pressure: data.main.pressure,
-            humidity: data.main.humidity,
-            wind: data.wind.speed,
-            cloud: data.clouds.all,
-            time : new Date()
-        };
+    try {
+        weather.now({id: config.openweathermap.city}, function (err, data) {
+            var influxPoint = {
+                main: data.weather[0].main,
+                description: data.weather[0].description,
+                icon: data.weather[0].icon,
+                temp: data.main.temp,
+                pressure: data.main.pressure,
+                humidity: data.main.humidity,
+                wind: data.wind.speed,
+                cloud: data.clouds.all,
+                time : new Date()
+            };
 
-        console.info("weather point: "+JSON.stringify(influxPoint));
+            console.info("weather point: "+JSON.stringify(influxPoint));
 
-        influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
-    });
+            influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
+        });
+    } catch (e) {
+        console.log(e);
+    }
 }, config.openweathermap.interval);
