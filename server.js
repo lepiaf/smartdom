@@ -12,6 +12,9 @@ var weather        = require('openweathermap');
 var schedule       = require('node-schedule');
 var heaterController = require('./app/controllers/heaterController');
 var config = require('./config/config');
+var morgan = require('morgan');
+var passport = require('passport');
+var jwt = require('jwt-simple');
 
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
@@ -28,6 +31,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-f
 
 app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
 app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
+
+app.use(morgan('dev'));
+
+app.use(passport.initialize());
+require('./app/authentication')(passport);
 
 // routes ==================================================
 require('./app/routes')(app, eventEmitter, influxClient); // pass our application into our routes

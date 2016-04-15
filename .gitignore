@@ -4,6 +4,7 @@ public/dist/
 public/libs/
 config/config.js
 config/nodes.js
+database/users.js
 .idea
 
 !.gitkeep

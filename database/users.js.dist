@@ -1,0 +1,3 @@
+module.exports = [
+    {username: "some username", password:"hashed password", salt:"salt generated"}
+];
