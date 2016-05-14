@@ -121,8 +121,8 @@ void incomingMessage(const MyMessage &message) {
   }
 
   if (message.sensor == CHILD_ID_BBOX) {
-    Serial.println("BBox press");
-    irsend.sendNEC(tvArr[message.getInt()], 32);
+    Serial.println("bbox press");
+    irsend.sendNEC(arrBbox[message.getInt()], 32);
     delay(40);
   }
 
