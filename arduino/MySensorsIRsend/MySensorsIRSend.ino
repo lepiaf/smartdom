@@ -1,5 +1,3 @@
-#include <MyTransportNRF24.h>
-#include <MyHwATMega328.h>
 #include <IRremote.h>
 #include <MySensor.h>
 #include <SPI.h>
@@ -10,12 +8,19 @@
 #define CHILD_ID_HIFI 2
 #define CHILD_ID_BBOX 3
 #define CHILD_ID_BLURAY 4
+#define CHILD_ID_HDMI 5
 
 IRsend irsend;
 
-MyTransportNRF24 radio(RF24_CE_PIN, RF24_CS_PIN, RF24_PA_LEVEL_GW);
-MyHwATMega328 hw;
-MySensor gw(radio, hw);
+MySensor gw;
+
+long hdmiArr[] = {
+  0x40BF609F, //1
+  0x40BF50AF, //2
+  0x40BF708F, //3
+  0x40BF906F, //4
+  0x40BFB04F  //5
+};
 
 long tvArr[] = {
   0xE0E040BF,
@@ -95,17 +100,16 @@ long arrBbox[] = {
   0x16D614EB,
 };
 
-void setup()
-{
+void setup() {
   gw.begin(incomingMessage, NODE_ID, true);
   gw.sendSketchInfo("IR Remote", "1.0");
 
   gw.present(CHILD_ID_TV, S_IR);
   gw.present(CHILD_ID_BBOX, S_IR);
+  gw.present(CHILD_ID_HDMI, S_IR);
 }
 
-void loop()
-{
+void loop() {
   gw.process();
 }
 
@@ -119,6 +123,12 @@ void incomingMessage(const MyMessage &message) {
   if (message.sensor == CHILD_ID_BBOX) {
     Serial.println("bbox press");
     irsend.sendNEC(arrBbox[message.getInt()], 32);
+    delay(40);
+  }
+
+  if (message.sensor == CHILD_ID_HDMI) {
+    Serial.println("HDMI press");
+    irsend.sendNEC(hdmiArr[message.getInt()], 32);
     delay(40);
   }
 }
