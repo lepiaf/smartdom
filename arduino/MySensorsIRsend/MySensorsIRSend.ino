@@ -100,8 +100,7 @@ long arrBbox[] = {
   0x16D614EB,
 };
 
-void setup()
-{
+void setup() {
   gw.begin(incomingMessage, NODE_ID, true);
   gw.sendSketchInfo("IR Remote", "1.0");
 
@@ -117,25 +116,19 @@ void loop() {
 void incomingMessage(const MyMessage &message) {
   if (message.sensor == CHILD_ID_TV) {
     Serial.println("TV press");
-    for (int i = 0; i < 3; i++) {
-      irsend.sendSAMSUNG(tvArr[message.getInt()], 32);
-      delay(40);
-    }
+    irsend.sendSAMSUNG(tvArr[message.getInt()], 32);
+    delay(40);
   }
 
   if (message.sensor == CHILD_ID_BBOX) {
     Serial.println("BBox press");
-    for (int i = 0; i < 3; i++) {
-      irsend.sendNEC(tvArr[message.getInt()], 32);
-      delay(40);
-    }
+    irsend.sendNEC(tvArr[message.getInt()], 32);
+    delay(40);
   }
 
   if (message.sensor == CHILD_ID_HDMI) {
     Serial.println("HDMI press");
-    for (int i = 0; i < 3; i++) {
-      irsend.sendNEC(hdmiArr[message.getInt()], 32);
-      delay(40);
-    }
+    irsend.sendNEC(hdmiArr[message.getInt()], 32);
+    delay(40);
   }
 }
