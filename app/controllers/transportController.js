@@ -5,10 +5,12 @@ module.exports = {
     eventEmitter: null,
     getTransport: function (req, res) {
         Transport.getRerC.then(function(rerCData) {
-            res.send({
-                rerc: rerCData
+            Transport.getBus126.then(function(bus126Data) {
+                res.send({
+                    bus: bus126Data,
+                    rerc: rerCData
+                });
             });
-
-        })
+        });
     }
 }

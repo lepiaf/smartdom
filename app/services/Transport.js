@@ -70,10 +70,9 @@ var getRerC = new Promise(function (resolve, reject) {
                     };
                     rerData.push(rerPoint);
 
-                    callback();
+                    callback(rerPoint);
                 },
                 function () {
-                    console.log(rerData);
                     resolve(rerData);
                 }
             );

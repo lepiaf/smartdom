@@ -1,6 +1,6 @@
 angular.module('MainCtrl', []).controller('MainController', [
-    '$scope', 'NodeService', 'KodiService', 'HeaterService', 'ngToast', 'AuthenticationService', '$window', '$location',
-    function($scope, NodeService, KodiService, HeaterService, ngToast, AuthenticationService, $window, $location) {
+    '$scope', 'NodeService', 'KodiService', 'HeaterService', 'ngToast', 'AuthenticationService', '$window', '$location', '$http',
+    function($scope, NodeService, KodiService, HeaterService, ngToast, AuthenticationService, $window, $location, $http) {
 
         $scope.temperature = {
             salon: 0,
@@ -13,6 +13,8 @@ angular.module('MainCtrl', []).controller('MainController', [
             salonGauche: "Arrêt"
         }
 
+        $scope.transport = [];
+
         $scope.init = function () {
             if (!$window.localStorage.token) {
                 return;
@@ -23,6 +25,10 @@ angular.module('MainCtrl', []).controller('MainController', [
 
                 NodeService.getNodesSensorTemperature(0,3).then(function(res){
                     $scope.temperature.chambre = res.data.last;
+                });
+
+                $http.get('/api/transport', function(response) {
+                    $scope.transport = response.data;
                 });
             });
 

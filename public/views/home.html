@@ -282,7 +282,18 @@
             </div>
             <div class="panel-body">
                 <table class="table table-striped">
-                    <tr></tr>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><td>Heure</td><td>Destination</td><td>Quai</td></tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="rer in $scope.transport.rerc">
+                                <td>{{rer.arriveAtRaw}}</td>
+                                <td>{{rer.destination}}</td>
+                                <td>{{rer.track}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </table>
             </div>
         </div>
@@ -294,7 +305,12 @@
             </div>
             <div class="panel-body">
                 <table class="table table-striped">
-                    <tr></tr>
+                    <thead>
+                        <tr><td>1er</td><td>2ème</td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>{{$scope.transport.bus.firstPass}}</td><td>{{$scope.transport.bus.secondPass}}</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
