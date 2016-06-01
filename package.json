@@ -25,6 +25,7 @@
     "openweathermap": "^1.0.0",
     "passport": "^0.3.2",
     "passport-jwt": "^1.2.1",
+    "promise": "^7.1.1",
     "querystring": "^0.2.0",
     "request": "^2.72.0",
     "serialport": "^2.0.4"

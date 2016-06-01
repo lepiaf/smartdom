@@ -2,6 +2,7 @@ var nodeController = require('./controllers/nodeController');
 var kodiController = require('./controllers/kodiController');
 var heaterController = require('./controllers/heaterController');
 var userController = require('./controllers/userController');
+var transportController = require('./controllers/transportController');
 
 var passport = require('passport');
 
@@ -14,6 +15,8 @@ module.exports = function(app, eventEmitter, influxClient) {
     heaterController.eventEmitter = eventEmitter;
 
     app.post('/api/kodi', passport.authenticate('jwt', {session:false}), kodiController.post);
+
+    app.get('/api/transport', transportController.getTransport);
 
     app.put('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.putHeaterMode);
     app.get('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.getHeaterMode);
