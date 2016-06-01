@@ -47,9 +47,9 @@ var getRerC = new Promise(function (resolve, reject) {
             async.forEachOf(
                 window.$('.recherche-horaires-resultats').find('tr').not('.stops'),
                 function (item, k, callback) {
-                    var timeElement = window.$(k).find('td')[1];
-                    var destinationElement = window.$(k).find('td')[2];
-                    var trackElement = window.$(k).find('td')[3];
+                    var timeElement = window.$(item).find('td')[1];
+                    var destinationElement = window.$(item).find('td')[2];
+                    var trackElement = window.$(item).find('td')[3];
                     var time = window.$(timeElement).text().trim();
                     if (time == "") {
                         return;
@@ -68,13 +68,12 @@ var getRerC = new Promise(function (resolve, reject) {
                         track: window.$(trackElement).text().trim(),
                         time: new Date()
                     };
-                    console.log(rerPoint);
-
                     rerData.push(rerPoint);
 
                     callback();
                 },
                 function () {
+                    console.log(rerData);
                     resolve(rerData);
                 }
             );
