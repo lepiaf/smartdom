@@ -3,6 +3,7 @@ var qs = require('querystring');
 var request = require('request');
 var jsdom = require("jsdom");
 var Promise = require('promise');
+var async = require("async");
 
 var form = {
     nomGare: 'ISSY VAL DE SEINE'
@@ -25,20 +26,14 @@ var getBus126 = new Promise(function (resolve, reject) {
                 firstPass: passage1,
                 secondPass: passage2
             });
-            
+
             console.log(passage1 + '; ' + passage2);
         }
     );
 });
 
-module.exports = {
-    getBus126: getBus126,
-    bus126: vm.bus126,
-    rerc: vm.rerc
-};
-
-
-function _getRerC() {
+var rerData = [];
+var getRerC = new Promise(function (resolve, reject) {
     request({
         headers: {
             'Content-Length': contentLength,
@@ -49,32 +44,45 @@ function _getRerC() {
         body: formData
     }, function(err, res, body) {
         jsdom.env(body, ["https://code.jquery.com/jquery-2.2.4.min.js"], function(err, window) {
-            window.$('.recherche-horaires-resultats').find('tr').not('.stops').each(function(v, k) {
-                var timeElement = window.$(k).find('td')[1];
-                var destinationElement = window.$(k).find('td')[2];
-                var trackElement = window.$(k).find('td')[3];
-                var time = window.$(timeElement).text().trim();
-                if (time == "") {
-                    return;
+            async.forEachOf(
+                window.$('.recherche-horaires-resultats').find('tr').not('.stops'),
+                function (item, k, callback) {
+                    var timeElement = window.$(k).find('td')[1];
+                    var destinationElement = window.$(k).find('td')[2];
+                    var trackElement = window.$(k).find('td')[3];
+                    var time = window.$(timeElement).text().trim();
+                    if (time == "") {
+                        return;
+                    }
+
+                    time = time.split(':');
+                    var arriveAt = moment().minutes(time[1]).hours(time[0]).second(0).millisecond(0);
+                    if (moment().hours() > time[0]) {
+                        arriveAt.add(1, 'day');
+                    }
+
+                    var rerPoint = {
+                        arriveAt: arriveAt.toISOString(),
+                        arriveAtRaw: window.$(timeElement).text().trim(),
+                        destination: window.$(destinationElement).text().trim(),
+                        track: window.$(trackElement).text().trim(),
+                        time: new Date()
+                    };
+                    console.log(rerPoint);
+
+                    rerData.push(rerPoint);
+
+                    callback();
+                },
+                function () {
+                    resolve(rerData);
                 }
-
-                time = time.split(':');
-                var arriveAt = moment().minutes(time[1]).hours(time[0]).second(0).millisecond(0);
-                if (moment().hours() > time[0]) {
-                    arriveAt.add(1, 'day');
-                }
-
-                var rerPoint = {
-                    arriveAt: arriveAt.toISOString(),
-                    arriveAtRaw: window.$(timeElement).text().trim(),
-                    destination: window.$(destinationElement).text().trim(),
-                    track: window.$(trackElement).text().trim(),
-                    time: new Date()
-                }
-
-                console.log(rerPoint);
-            });
-
+            );
         });
     });
-}
+});
+
+module.exports = {
+    getBus126: getBus126,
+    getRerC: getRerC
+};
