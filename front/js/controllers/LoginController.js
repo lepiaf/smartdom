@@ -5,7 +5,7 @@ angular.module('smartdom.controller.login', []).controller('LoginController', ['
             if (username !== undefined && password !== undefined) {
                 UserService.logIn(username, password).success(function(data) {
                     AuthenticationService.isLogged = true;
-                    $window.sessionStorage.token = data.token;
+                    $window.localStorage.token = data.token;
                     $location.path("/");
                 }).error(function(status, data) {
                     console.log(status);
@@ -17,7 +17,7 @@ angular.module('smartdom.controller.login', []).controller('LoginController', ['
         $scope.logout = function logout() {
             if (AuthenticationService.isLogged) {
                 AuthenticationService.isLogged = false;
-                delete $window.sessionStorage.token;
+                delete $window.localStorage.token;
                 $location.path("/");
             }
         }

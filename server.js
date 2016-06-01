@@ -61,6 +61,10 @@ sp.on('open', function(){
         var sensorData = MySensors.parse(data);
         sensorData.payload = parseFloat(sensorData.payload);
 
+        if (sensorData.messageType === "internal") {
+            return;
+        }
+
         var influxPoint = {
             nodeId: sensorData.nodeId,
             payload: sensorData.payload,

@@ -25,7 +25,7 @@ angular.module('smartdomApp', [
     $httpProvider.interceptors.push('TokenInterceptor');
 }).run(function($rootScope, $location, $window) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute) {
-        if (nextRoute.access.requiredLogin && !$window.sessionStorage.token) {
+        if (nextRoute.access.requiredLogin && !$window.localStorage.token) {
             $location.path("/login");
         }
     });

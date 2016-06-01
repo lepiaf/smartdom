@@ -117,7 +117,7 @@ module.exports = {
                 return res.status(404).send({code: 404, message: "Node not found"});
             }
 
-            var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.id+'\' AND time > now() - 1h';
+            var query = 'SELECT last("payload") FROM "V_TEMP" WHERE "childSensorId" = \''+sensor.id+'\' AND time > now() - 6h';
             module.exports.influxClient.query(query, function(err, results) {
                 if (results !== undefined && results.length > 0 && results[0].length > 0) {
                     res.send(results[0][0]);

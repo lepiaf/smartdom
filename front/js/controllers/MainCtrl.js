@@ -14,18 +14,19 @@ angular.module('MainCtrl', []).controller('MainController', [
         }
 
         $scope.init = function () {
-            if (!$window.sessionStorage.token) {
+            if (!$window.localStorage.token) {
                 return;
             }
 
             NodeService.getNodesSensorTemperature(4,5).then(function(res){
                 $scope.temperature.salon = res.data.last;
+
+                NodeService.getNodesSensorTemperature(0,3).then(function(res){
+                    $scope.temperature.chambre = res.data.last;
+                });
             });
 
-            NodeService.getNodesSensorTemperature(0,3).then(function(res){
-                $scope.temperature.chambre = res.data.last;
-            });
-
+            return;
             HeaterService.resource.getHeaterMode("chambre").then(function(res) {
                 $scope.heater.chambre = res.data.last;
             });
@@ -77,10 +78,10 @@ angular.module('MainCtrl', []).controller('MainController', [
 
         setInterval(function(){
             $scope.init();
-        }, 5000);
+        }, 30000);
 
         $scope.logout = function() {
-            delete $window.sessionStorage.token;
+            delete $window.localStorage.token;
             $location.path("/login");
         }
 

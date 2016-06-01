@@ -2,8 +2,8 @@ angular.module('smartdom.interceptor.token', []).factory('TokenInterceptor', fun
     return {
         request: function (config) {
             config.headers = config.headers || {};
-            if ($window.sessionStorage.token) {
-                config.headers.Authorization = $window.sessionStorage.token;
+            if ($window.localStorage.token) {
+                config.headers.Authorization = $window.localStorage.token;
             }
             return config;
         },
@@ -14,7 +14,7 @@ angular.module('smartdom.interceptor.token', []).factory('TokenInterceptor', fun
 
         /* Set Authentication.isAuthenticated to true if 200 received */
         response: function (response) {
-            if (response != null && response.status == 200 && $window.sessionStorage.token) {
+            if (response != null && response.status == 200 && $window.localStorage.token) {
                 AuthenticationService.isAuthenticated = true;
             }
             return response || $q.when(response);
@@ -22,8 +22,8 @@ angular.module('smartdom.interceptor.token', []).factory('TokenInterceptor', fun
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token)) {
-                delete $window.sessionStorage.token;
+            if (rejection != null && rejection.status === 401 && ($window.localStorage.token)) {
+                delete $window.localStorage.token;
                 AuthenticationService.isAuthenticated = false;
                 $location.path("/login");
             }

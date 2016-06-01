@@ -4,6 +4,7 @@ public/dist/
 public/libs/
 config/config.js
 config/nodes.js
+config/db.js
 database/users.js
 .idea
 
