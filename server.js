@@ -15,6 +15,8 @@ var config = require('./config/config');
 var morgan = require('morgan');
 var passport = require('passport');
 var jwt = require('jwt-simple');
+var async = require('async');
+var FlowerPower = require('flower-power');
 
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
@@ -127,3 +129,99 @@ setInterval(function(){
         console.log(e);
     }
 }, config.openweathermap.interval);
+
+// flowerpower
+var flowerPowerResults = {};
+FlowerPower.discover(function(flowerPower) {
+    async.series([
+        function(callback) {
+            flowerPower.on('disconnect', function() {
+                console.log('[Flower power] disconnected!');
+            });
+
+            console.log('[Flower power] connectAndSetup');
+            flowerPower.connectAndSetup(callback);
+        },
+        function(callback) {
+            flowerPower.readSystemId(function(error, systemId) {
+                console.log('[Flower power] system id = ' + systemId);
+                flowerPowerResults.systemId = systemId;
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readBatteryLevel(function(error, batteryLevel) {
+                console.log('[Flower power] battery level = ' + batteryLevel);
+                flowerPowerResults.batteryLevel = batteryLevel;
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readFriendlyName(function(error, friendlyName) {
+                console.log('[Flower power] friendly name = ' + friendlyName);
+                flowerPowerResults.friendlyName = friendlyName;
+                callback();
+            });
+        },
+
+        function(callback) {
+            flowerPower.readSoilTemperature(function(error, temperature) {
+                console.log('[Flower power] soil temperature = ' + temperature.toFixed(2) + '°C');
+                flowerPowerResults.soilTemperature = temperature.toFixed(2);
+                callback();
+            });
+        },
+
+        function(callback) {
+            flowerPower.readCalibratedSoilMoisture(function(error, soilMoisture) {
+                console.log('[Flower power] soil moisture = ' + soilMoisture.toFixed(2) + '%');
+                flowerPowerResults.soilMoisture = soilMoisture.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readCalibratedAirTemperature(function(error, temperature) {
+                console.log('[Flower power] calibrated air temperature = ' + temperature.toFixed(2) + '°C');
+                flowerPowerResults.airTemperature = temperature.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readCalibratedSunlight(function(error, sunlight) {
+                console.log('[Flower power] sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
+                flowerPowerResults.sunlight = sunlight.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readCalibratedEa(function(error, ea) {
+                console.log('[Flower power] EA = ' + ea.toFixed(2));
+                flowerPowerResults.ea = ea.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readCalibratedEcb(function(error, ecb) {
+                console.log('[Flower power] ECB = ' + ecb.toFixed(2) + ' dS/m');
+                flowerPowerResults.ecb = ecb.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            flowerPower.readCalibratedEcPorous(function(error, ecPorous) {
+                console.log('[Flower power] EC porous = ' + ecPorous.toFixed(2) + ' dS/m');
+                flowerPowerResults.ecPorous = ecPorous.toFixed(2);
+                callback();
+            });
+        },
+        function(callback) {
+            console.log('[Flower power] disconnect');
+            flowerPowerResults.time = new Date();
+            console.info("[Flower power] write influx point: "+JSON.stringify(flowerPowerResults));
+
+            influxClient.writePoint("flowerpower", flowerPowerResults, null, function(err, response) {});
+
+            flowerPower.disconnect(callback);
+        }
+    ]);
+});
