@@ -1,8 +1,10 @@
-#include <IRremote.h>
-#include <MySensor.h>
-#include <SPI.h>
+#define MY_RADIO_NRF24
+#define MY_NODE_ID 3
+#define MY_RF24_PA_LEVEL RF24_PA_LOW
 
-#define NODE_ID 3
+#include <SPI.h>
+#include <MySensors.h>
+#include <IRremote.h>
 
 #define CHILD_ID_TV 1
 #define CHILD_ID_HIFI 2
@@ -11,8 +13,6 @@
 #define CHILD_ID_HDMI 5
 
 IRsend irsend;
-
-MySensor gw;
 
 long hdmiArr[] = {
   0x40BF609F, //1
@@ -101,33 +101,31 @@ long arrBbox[] = {
 };
 
 void setup() {
-  gw.begin(incomingMessage, NODE_ID, true);
-  gw.sendSketchInfo("IR Remote", "1.0");
+}
 
-  gw.present(CHILD_ID_TV, S_IR);
-  gw.present(CHILD_ID_BBOX, S_IR);
-  gw.present(CHILD_ID_HDMI, S_IR);
+void presentation() {
+  sendSketchInfo("IR Remote", "2.0");
+
+  present(CHILD_ID_TV, S_IR);
+  present(CHILD_ID_BBOX, S_IR);
+  present(CHILD_ID_HDMI, S_IR);
 }
 
 void loop() {
-  gw.process();
 }
 
-void incomingMessage(const MyMessage &message) {
+void receive(const MyMessage &message) {
   if (message.sensor == CHILD_ID_TV) {
-    Serial.println("TV press");
     irsend.sendSAMSUNG(tvArr[message.getInt()], 32);
     delay(40);
   }
 
   if (message.sensor == CHILD_ID_BBOX) {
-    Serial.println("bbox press");
     irsend.sendNEC(arrBbox[message.getInt()], 32);
     delay(40);
   }
 
   if (message.sensor == CHILD_ID_HDMI) {
-    Serial.println("HDMI press");
     irsend.sendNEC(hdmiArr[message.getInt()], 32);
     delay(40);
   }
