@@ -1,7 +1,7 @@
 #define MY_RADIO_NRF24
 #define MY_NODE_ID 1
 #define MY_RF24_PA_LEVEL RF24_PA_LOW
-#define MY_REPEATER_NODE
+#define MY_REPEATER_FEATURE
 
 #include <SoftwareSerial.h>
 #include <SPI.h>
