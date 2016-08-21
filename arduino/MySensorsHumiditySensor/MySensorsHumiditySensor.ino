@@ -1,5 +1,5 @@
 #define MY_RADIO_NRF24
-#define MY_NODE_ID 6
+#define MY_NODE_ID 7
 #define MY_RF24_PA_LEVEL RF24_PA_LOW
 
 #include <SPI.h>
