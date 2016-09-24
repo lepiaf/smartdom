@@ -1,3 +1,13 @@
+#define MY_DEBUG
+#define MY_RADIO_NRF24
+#define MY_NODE_ID 10
+#define MY_RF24_CS_PIN 7
+#define MY_RF24_CE_PIN 8
+#define MY_RF24_PA_LEVEL RF24_PA_LOW
+#define CHILD_ID_REMOTE 1
+
+#include <SPI.h>
+#include <MySensors.h>
 #include <LiquidCrystal.h>
 #include <LiquidMenu.h>
 #include <Bounce2.h>
@@ -9,22 +19,37 @@ const byte LCD_D4 = 5;
 const byte LCD_D5 = 4;
 const byte LCD_D6 = 3;
 const byte LCD_D7 = 2;
-const byte ENCODER_PIN_1 = 8;
-const byte ENCODER_PIN_2 = 9;
+const byte ENCODER_PIN_1 = 9;
+const byte ENCODER_PIN_2 = 10;
 const byte ENCODER_PIN_SW = 6;
+const byte HOME = 0;
+const byte VOLUME = 1;
 
+byte currentMenu = 0;
 int rotaryValue = 0;
 long oldPositionRotary = -999;
-Encoder rotaryButton(ENCODER_PIN_1, ENCODER_PIN_2);
-
-Bounce debouncerRotaryButton = Bounce();
-
 char cursorMenuLine1 = '>';
 char cursorMenuLine2 = ' ';
 char cursorMenuLine3 = ' ';
 char cursorMenuLine4 = ' ';
+int step = 0;
+char direction;
+int selectedMenuLine = 1;
+char directionVolume = ' ';
 
-// init lisqui menu with lcd
+MyMessage msg(CHILD_ID_REMOTE, V_IR_SEND);
+
+void presentation()  {
+  // Send the sketch version information to the gateway and Controller
+  sendSketchInfo("Remote", "1.0");
+
+  // Register all sensors to gateway (they will be created as child devices)
+  present(CHILD_ID_REMOTE, S_IR);
+}
+
+Encoder rotaryButton(ENCODER_PIN_1, ENCODER_PIN_2);
+Bounce debouncerRotaryButton = Bounce();
+
 LiquidCrystal lcd(LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 LiquidMenu menu(lcd);
 
@@ -37,18 +62,14 @@ LiquidScreen homeScreen(home_line1, home_line2, home_line3, home_line4);
 
 // volume screen
 LiquidLine volume_line1(1, 0, "Volume TV");
-LiquidLine volume_line2(1, 1, " - << o >> +");
+LiquidLine volume_line2(1, 1, "Direction: ", directionVolume);
 LiquidLine volume_line3(1, 2, "");
 LiquidLine volume_line4(1, 3, "");
 LiquidScreen volumeScreen(volume_line1, volume_line2, volume_line3, volume_line4);
 
-const byte HOME = 0;
-const byte VOLUME = 1;
-byte currentMenu = 0;
-
 void setup()
 {
-  Serial.begin(250000);
+  Serial.begin(115200);
   lcd.begin(20, 4);
 
   pinMode(ENCODER_PIN_SW, INPUT_PULLUP);
@@ -60,10 +81,9 @@ void setup()
   menu.update();
 }
 
-int step = 0;
-char direction;
-int selectedMenuLine = 1;
 
+
+int lastRotaryButtonValue = HIGH;
 void loop()
 {
   debouncerRotaryButton.update();
@@ -130,15 +150,28 @@ void loop()
       selectedMenuLine = step;
     }
 
+
     if (currentMenu == VOLUME) {
       if (step == 2) {
         step = 1;
         Serial.println("raise volume");
+        directionVolume = '+';
+        menu.update();
+        msg.setSensor(1);
+        msg.setDestination(3);
+        send(msg.set(15), true);
+        wait(500);
       }
 
       if (step == 0) {
         step = 1;
         Serial.println("lower volume");
+        directionVolume = '-';
+        menu.update();
+        msg.setSensor(1);
+        msg.setDestination(3);
+        send(msg.set(16), true);
+        wait(500);
       }
     }
   }
@@ -151,7 +184,6 @@ void loop()
 
     return;
   }
-
 }
 
 
