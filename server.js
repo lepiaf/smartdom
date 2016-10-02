@@ -16,6 +16,7 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var async = require('async');
 var compression = require("compression");
+var schedule = require('node-schedule');
 
 var eventEmitter = new events.EventEmitter();
 var influxClient = influx({
@@ -129,3 +130,15 @@ setInterval(function(){
         console.log(e);
     }
 }, config.openweathermap.interval);
+
+var lightUp = schedule.scheduleJob('0 8 * * *', function(){
+	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;3\n")
+});
+
+var lightFade = schedule.scheduleJob('1 8 * * *', function(){
+	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;19\n")
+});
+
+var lightDown = schedule.scheduleJob('0 9 * * *', function(){
+	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;2\n")
+});
