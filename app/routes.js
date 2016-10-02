@@ -15,8 +15,6 @@ module.exports = function(app, eventEmitter, influxClient) {
 
     app.post('/api/kodi', passport.authenticate('jwt', {session:false}), kodiController.post);
 
-    app.get('/api/transport', transportController.getTransport);
-
     app.put('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.putHeaterMode);
     app.get('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.getHeaterMode);
 
