@@ -3,8 +3,7 @@ var express        = require('express');
 var app            = express();
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-var serialport     = require("serialport");
-var SerialPort     = serialport.SerialPort;
+var SerialPort     = require('serialport');
 var influx         = require('influx');
 var events         = require('events');
 var MySensors      = require('./app/services/MySensors');
@@ -49,9 +48,10 @@ exports = module.exports = app;
 
 // handle message from mysensors gateway ===================
 var sp = new SerialPort(config.arduino, {
-    parser: serialport.parsers.readline("\n"),
-    baudrate: 115200
-}, true);
+    parser: SerialPort.parsers.readline("\n"),
+    baudrate: 115200,
+    autoOpen: true
+});
 
 sp.on('error', function(data){
     // do nothing
