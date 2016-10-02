@@ -16,6 +16,7 @@ angular.module('MainCtrl', []).controller('MainController', [
         $scope.transport = [];
 
         $scope.init = function () {
+            return;
             if (!$window.localStorage.token) {
                 return;
             }
