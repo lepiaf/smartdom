@@ -1,6 +1,6 @@
 #define MY_RADIO_NRF24
 #define MY_NODE_ID 7
-#define MY_RF24_PA_LEVEL RF24_PA_LOW
+#define MY_RF24_PA_LEVEL RF24_PA_HIGH
 
 #include <SPI.h>
 #include <MySensors.h>
@@ -13,11 +13,11 @@ unsigned long SLEEP_TIME = 60000; // Sleep time between reads (in milliseconds)
 
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
-DHT dht;
+DHT dht(HUMIDITY_SENSOR_DIGITAL_PIN, DHT22);
 
 void setup()
 {
-  dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN);
+  dht.begin();
 }
 
 void presentation()
@@ -31,11 +31,16 @@ void loop()
 {
   delay(4000);
 
-  float temperature = dht.getTemperature();
-  float humidity = dht.getHumidity();
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
 
-  send(msgHum.set(humidity, 1));
-  send(msgTemp.set(temperature, 1));
+  if (!isnan(humidity)) {
+    send(msgHum.set(humidity, 1));
+  }
+
+  if (!isnan(temperature)) {
+    send(msgTemp.set(temperature, 1));
+  }
 
   sleep(SLEEP_TIME); //sleep a bit
 }
