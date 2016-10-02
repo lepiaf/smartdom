@@ -1,5 +1,7 @@
 #define MY_RADIO_NRF24
 #define MY_NODE_ID 8
+#define MY_RF24_PA_LEVEL RF24_PA_HIGH
+#define MY_DEBUG
 
 #include <SPI.h>
 #include <MySensors.h>
