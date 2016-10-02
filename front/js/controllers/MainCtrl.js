@@ -32,7 +32,6 @@ angular.module('MainCtrl', []).controller('MainController', [
                 });
             });
 
-            return;
             HeaterService.resource.getHeaterMode("chambre").then(function(res) {
                 $scope.heater.chambre = res.data.last;
             });
@@ -82,13 +81,8 @@ angular.module('MainCtrl', []).controller('MainController', [
 
         $scope.kodi = KodiService;
 
-        setInterval(function(){
-            $scope.init();
-        }, 30000);
-
         $scope.logout = function() {
             delete $window.localStorage.token;
             $location.path("/login");
         }
-
 }]);

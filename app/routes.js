@@ -2,7 +2,6 @@ var nodeController = require('./controllers/nodeController');
 var kodiController = require('./controllers/kodiController');
 var heaterController = require('./controllers/heaterController');
 var userController = require('./controllers/userController');
-var transportController = require('./controllers/transportController');
 
 var passport = require('passport');
 

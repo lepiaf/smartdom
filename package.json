@@ -29,7 +29,8 @@
     "promise": "^7.1.1",
     "querystring": "^0.2.0",
     "request": "^2.72.0",
-    "serialport": "^2.0.4"
+    "serialport": "^2.0.4",
+    "compression": "^1.6.2"
   },
   "devDependencies": {
     "gulp-concat": "^2.6.0",
