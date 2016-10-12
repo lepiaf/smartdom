@@ -61,7 +61,7 @@ module.exports = {
     getHeaterMode: function(req, res) {
         var room = req.params.room;
 
-        var query = 'SELECT "mode" FROM "heater" WHERE "room" = \''+room+'\' AND time > now() - 6h';
+        var query = 'SELECT last("mode") FROM "heater" WHERE "room" = \''+room+'\' AND time > now() - 6h';
         module.exports.influxClient.query(query, function(err, results) {
             if (results !== undefined && results.length > 0 && results[0].length > 0) {
                 res.send(results[0][0]);

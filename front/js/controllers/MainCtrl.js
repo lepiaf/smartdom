@@ -29,13 +29,13 @@ angular.module('MainCtrl', []).controller('MainController', [
             });
 
             HeaterService.resource.getHeaterMode("chambre").then(function(res) {
-                $scope.heater.chambre = res.data.mode;
+                $scope.heater.chambre = res.data.last;
 
                 HeaterService.resource.getHeaterMode("salonGauche").then(function(res) {
-                    $scope.heater.salonGauche = res.data.mode;
+                    $scope.heater.salonGauche = res.data.last;
 
                     HeaterService.resource.getHeaterMode("salonDroite").then(function(res) {
-                        $scope.heater.salonDroite = res.data.mode;
+                        $scope.heater.salonDroite = res.data.last;
                     });
                 });
             });
