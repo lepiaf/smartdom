@@ -5,18 +5,17 @@ angular.module('MainCtrl', []).controller('MainController', [
         $scope.temperature = {
             salon: 0,
             chambre: 0
-        }
+        };
 
         $scope.heater = {
             chambre: "Arrêt",
             salonDroite: "Arrêt",
             salonGauche: "Arrêt"
-        }
+        };
 
         $scope.transport = [];
 
         $scope.init = function () {
-            return;
             if (!$window.localStorage.token) {
                 return;
             }
@@ -24,27 +23,23 @@ angular.module('MainCtrl', []).controller('MainController', [
             NodeService.getNodesSensorTemperature(4,5).then(function(res){
                 $scope.temperature.salon = res.data.last;
 
-                NodeService.getNodesSensorTemperature(0,3).then(function(res){
-                    $scope.temperature.chambre = res.data.last;
-                });
-
-                $http.get('/api/transport', function(response) {
-                    $scope.transport = response.data;
-                });
+                // NodeService.getNodesSensorTemperature(0,3).then(function(res){
+                //     $scope.temperature.chambre = res.data.last;
+                // });
             });
 
             HeaterService.resource.getHeaterMode("chambre").then(function(res) {
                 $scope.heater.chambre = res.data.last;
-            });
 
-            HeaterService.resource.getHeaterMode("salonGauche").then(function(res) {
-                $scope.heater.salonGauche = res.data.last;
-            });
+                HeaterService.resource.getHeaterMode("salonGauche").then(function(res) {
+                    $scope.heater.salonGauche = res.data.last;
 
-            HeaterService.resource.getHeaterMode("salonDroite").then(function(res) {
-                $scope.heater.salonDroite = res.data.last;
+                    HeaterService.resource.getHeaterMode("salonDroite").then(function(res) {
+                        $scope.heater.salonDroite = res.data.last;
+                    });
+                });
             });
-        }
+        };
 
         $scope.getClassByRoom = function(room) {
             if ($scope.heater[room] === "eco") {
@@ -56,7 +51,7 @@ angular.module('MainCtrl', []).controller('MainController', [
             }
 
             return "label-danger";
-        }
+        };
 
 
         $scope.sendButton = function (node, sensor, state) {
@@ -85,5 +80,5 @@ angular.module('MainCtrl', []).controller('MainController', [
         $scope.logout = function() {
             delete $window.localStorage.token;
             $location.path("/login");
-        }
+        };
 }]);
