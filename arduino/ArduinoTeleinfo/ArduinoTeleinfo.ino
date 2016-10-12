@@ -1,11 +1,11 @@
-#define MY_RADIO_NRF24
-#define MY_NODE_ID 1
-#define MY_RF24_PA_LEVEL RF24_PA_HIGH
-
+#include <MyTransportNRF24.h>
+#include <MyHwATMega328.h>
 #include <SoftwareSerial.h>
+#include <MySensor.h>
 #include <SPI.h>
-#include <MySensors.h>
 #include "TeleInfo.h"
+
+#define NODE_ID 1
 
 #define ID_PAPP 4
 #define ID_IINST 5
@@ -15,42 +15,49 @@
 
 TeleInfo* homeTeleInfo;
 
+MyTransportNRF24 radio(RF24_CE_PIN, RF24_CS_PIN, RF24_PA_HIGH);
+MyHwATMega328 hw;
+MySensor gw(radio, hw);
+
 MyMessage msgPAPP(ID_PAPP, V_WATT);
 MyMessage msgIINST(ID_IINST, V_CURRENT);
 MyMessage msgHCHC(ID_HCHC, V_KWH);
 MyMessage msgHCHP(ID_HCHP, V_KWH);
-MyMessage msgOPTARIF(ID_OPTARIF, V_CUSTOM);
+MyMessage msgOPTARIF(ID_OPTARIF, V_VAR1);
 
 void setup()
 {
   homeTeleInfo = new TeleInfo();
-}
 
-void presentation()
-{
-  sendSketchInfo("teleinfo", "2.0");
+  gw.begin(NULL, NODE_ID, true, 0);
+  gw.sendSketchInfo("teleinfo", "1.0");
 
-  present(ID_PAPP, S_POWER);
-  present(ID_IINST, S_MULTIMETER);
-  present(ID_HCHC, S_POWER);
-  present(ID_HCHP, S_POWER);
-  present(ID_OPTARIF, S_CUSTOM);
+  gw.present(ID_PAPP, S_POWER);
+  gw.present(ID_IINST, S_POWER);
+  gw.present(ID_HCHC, S_POWER);
+  gw.present(ID_HCHP, S_POWER);
+
+  Serial.println(F("Mysensor Node EDF TeleInfo ready"));
 }
 
 void loop()
 {
+  const char optarif[4] = "";
   boolean readCompleted;
   readCompleted = homeTeleInfo->readTeleInfo();
 
   if (readCompleted) {
-    send(msgIINST.set(homeTeleInfo->IINST, 0));
+    gw.send(msgIINST.set(homeTeleInfo->IINST, 0));
     delay(100);
-    send(msgHCHC.set(homeTeleInfo->HCHC, 0));
+    gw.send(msgHCHC.set(homeTeleInfo->HCHC, 0));
     delay(100);
-    send(msgHCHP.set(homeTeleInfo->HCHP, 0));
+    gw.send(msgHCHP.set(homeTeleInfo->HCHP, 0));
     delay(100);
-    send(msgPAPP.set(homeTeleInfo->PAPP, 0));
+    gw.send(msgPAPP.set(homeTeleInfo->PAPP, 0));
     delay(100);
+
+    (homeTeleInfo->OPTARIF).toCharArray(optarif, 4);
+    gw.send(msgOPTARIF.set(optarif));
   }
 
   delay(10000);
