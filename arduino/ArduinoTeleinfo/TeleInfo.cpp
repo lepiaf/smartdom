@@ -126,10 +126,10 @@ boolean TeleInfo::handleBuffer(char *bufferTeleinfo)
     return true;
   }
 
-  //  if (firstCharBufferTeleinfo == 'P' && bufferTeleinfo[1] == 'T') { //PTEC
-  //    PTEC = String(resultString);
-  //    return true;
-  //  }
+  if (firstCharBufferTeleinfo == 'P' && bufferTeleinfo[1] == 'T') { //PTEC
+    PTEC = String(resultString);
+    return true;
+  }
 
   if (firstCharBufferTeleinfo == 'I' && bufferTeleinfo[1] == 'I') { //IINST
     IINST = atoi(resultString);

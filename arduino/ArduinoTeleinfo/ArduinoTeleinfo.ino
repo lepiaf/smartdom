@@ -36,6 +36,7 @@ void setup()
   gw.present(ID_IINST, S_POWER);
   gw.present(ID_HCHC, S_POWER);
   gw.present(ID_HCHP, S_POWER);
+  gw.present(ID_OPTARIF, S_CUSTOM);
 
   Serial.println(F("Mysensor Node EDF TeleInfo ready"));
 }
@@ -56,7 +57,7 @@ void loop()
     gw.send(msgPAPP.set(homeTeleInfo->PAPP, 0));
     delay(100);
 
-    (homeTeleInfo->OPTARIF).toCharArray(optarif, 4);
+    (homeTeleInfo->PTEC).toCharArray(optarif, 4);
     gw.send(msgOPTARIF.set(optarif));
   }
 
