@@ -131,12 +131,8 @@ setInterval(function(){
     }
 }, config.openweathermap.interval);
 
-var lightUp = schedule.scheduleJob('0 8 * * *', function(){
+var lightUp = schedule.scheduleJob('30 7 * * *', function(){
 	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;3\n")
-});
-
-var lightFade = schedule.scheduleJob('1 8 * * *', function(){
-	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;19\n")
 });
 
 var lightDown = schedule.scheduleJob('0 9 * * *', function(){
