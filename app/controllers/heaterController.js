@@ -65,6 +65,7 @@ module.exports = {
         module.exports.influxClient.query(query, function(err, results) {
             if (results !== undefined && results.length > 0 && results[0].length > 0) {
                 res.send(results[0][0]);
+                return;
             }
 
             res.send({}, 404);
