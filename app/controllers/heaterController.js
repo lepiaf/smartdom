@@ -66,6 +66,8 @@ module.exports = {
             if (results !== undefined && results.length > 0 && results[0].length > 0) {
                 res.send(results[0][0]);
             }
+
+            res.send({}, 404);
         });
     },
     changeHeaterMode: function(room, mode) {
