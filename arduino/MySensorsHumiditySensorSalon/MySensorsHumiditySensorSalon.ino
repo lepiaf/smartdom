@@ -1,15 +1,19 @@
-#define MY_RADIO_NRF24
-#define MY_NODE_ID 4
-#define MY_RF24_PA_LEVEL RF24_PA_LOW
-
+#include <MyTransportNRF24.h>
+#include <MyHwATMega328.h>
+#include <MySensor.h>
 #include <SPI.h>
-#include <MySensors.h>
 #include <DHT.h>
 
 #define CHILD_ID_TEMP 5
 #define CHILD_ID_HUM 4
+#define NODE_ID 4
 #define HUMIDITY_SENSOR_DIGITAL_PIN 3
+
 unsigned long SLEEP_TIME = 60000; // Sleep time between reads (in milliseconds)
+
+MyTransportNRF24 radio(RF24_CE_PIN, RF24_CS_PIN, RF24_PA_LOW);
+MyHwATMega328 hw;
+MySensor gw(radio, hw);
 
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
@@ -18,13 +22,12 @@ DHT dht(HUMIDITY_SENSOR_DIGITAL_PIN, DHT22);
 void setup()
 {
   dht.begin();
-}
+  gw.begin(NULL, NODE_ID, false, 0);
+  gw.sendSketchInfo("Salon", "1.0");
 
-void presentation()
-{
-  sendSketchInfo("DHT Salon", "2.0");
-  present(CHILD_ID_TEMP, S_TEMP);
-  present(CHILD_ID_HUM, S_HUM);
+  // Register all sensors to gw (they will be created as child devices)
+  gw.present(CHILD_ID_TEMP, S_TEMP);
+  gw.present(CHILD_ID_HUM, S_HUM);
 }
 
 void loop()
@@ -34,14 +37,8 @@ void loop()
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
-  if (!isnan(humidity)) {
-    send(msgHum.set(humidity, 1));
-  }
-
-  if (!isnan(temperature)) {
-    send(msgTemp.set(temperature, 1));
-  }
-
-  sleep(SLEEP_TIME); //sleep a bit
+  gw.send(msgHum.set(humidity, 1));
+  gw.send(msgTemp.set(temperature, 1));
+  
+  gw.sleep(SLEEP_TIME); //sleep a bit
 }
-
