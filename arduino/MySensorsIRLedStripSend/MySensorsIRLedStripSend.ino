@@ -1,15 +1,17 @@
-#define MY_RADIO_NRF24
-#define MY_NODE_ID 8
-#define MY_RF24_PA_LEVEL RF24_PA_HIGH
-#define MY_DEBUG
-
 #include <SPI.h>
-#include <MySensors.h>
+#include <MyTransportNRF24.h>
+#include <MyHwATMega328.h>
+#include <MySensor.h>
 #include <IRremote.h>
 
 #define CHILD_ID_LED_STRIP 6
+#define NODE_ID 8
 
 IRsend irsend;
+
+MyTransportNRF24 radio(RF24_CE_PIN, RF24_CS_PIN, RF24_PA_HIGH);
+MyHwATMega328 hw;
+MySensor gw(radio, hw);
 
 long ledArr[] = {
   0xF700FF,
@@ -39,15 +41,13 @@ long ledArr[] = {
 };
 
 void setup() {
-}
-
-void presentation() {
-  sendSketchInfo("LED Strip", "2.0");
-
-  present(CHILD_ID_LED_STRIP, S_IR);
+  gw.begin(receive, NODE_ID, true);
+  gw.sendSketchInfo("LED Strip", "1.0");
+  gw.present(CHILD_ID_LED_STRIP, S_IR);
 }
 
 void loop() {
+  gw.process();
 }
 
 void receive(const MyMessage &message) {

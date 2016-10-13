@@ -29,7 +29,7 @@ void setup()
 {
   homeTeleInfo = new TeleInfo();
 
-  gw.begin(NULL, NODE_ID, true, 0);
+  gw.begin(NULL, NODE_ID, true);
   gw.sendSketchInfo("teleinfo", "1.0");
 
   gw.present(ID_PAPP, S_POWER);
@@ -43,7 +43,7 @@ void setup()
 
 void loop()
 {
-  const char optarif[4] = "";
+  char optarif[4] = "";
   boolean readCompleted;
   readCompleted = homeTeleInfo->readTeleInfo();
 
@@ -60,7 +60,6 @@ void loop()
     (homeTeleInfo->PTEC).toCharArray(optarif, 4);
     gw.send(msgOPTARIF.set(optarif));
   }
-
-  delay(10000);
+  gw.wait(10000);
 }
 
