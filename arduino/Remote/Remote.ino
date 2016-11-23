@@ -33,6 +33,7 @@ const byte CHANNEL = 5;
 byte currentMenu = 0;
 int rotaryValue = 0;
 long oldPositionRotary = -999;
+long positionRotary = -999;
 char cursorMenuLine1 = '>';
 char cursorMenuLine2 = ' ';
 char cursorMenuLine3 = ' ';
@@ -45,8 +46,11 @@ char directionChaine = ' ';
 
 int lastRotaryButtonValue = HIGH;
 int rotaryButtonValue = HIGH;
-int selectedChauffage = 1;
-int selectedChauffageMode = 1;
+
+int selectedHeaterId = 1;
+int selectedHeaterMode = 1;
+int sw1 = 0;
+int sw2 = 0;
 
 MyTransportNRF24 transport(MY_RF24_CE_PIN, MY_RF24_CS_PIN, MY_RF24_PA_LEVEL);
 MyHwATMega328 hw;
@@ -66,6 +70,13 @@ LiquidLine home_line2(0, 1, cursorMenuLine2, "2.Chauffage");
 LiquidLine home_line3(0, 2, cursorMenuLine3, "3.Autre");
 LiquidLine home_line4(0, 3, cursorMenuLine4, "Salon ON | OFF");
 LiquidScreen homeScreen(home_line1, home_line2, home_line3, home_line4);
+
+// tv screen
+LiquidLine tv_line1(0, 0, "1.BBOX");
+LiquidLine tv_line2(0, 1, "2.TV");
+LiquidLine tv_line3(0, 2, "");
+LiquidLine tv_line4(0, 3, "Retour | On | Off");
+LiquidScreen tvScreen(tv_line1, tv_line2, tv_line3, tv_line4);
 
 // volume screen
 LiquidLine volume_line1(1, 0, "Volume TV");
@@ -105,6 +116,7 @@ char hexaKeys[ROWS][COLS] = {
 };
 byte rowPins[ROWS] = {22, 23, 24}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {25, 26, 27}; //connect to the column pinouts of the keypad
+char customKey = ' ';
 
 //initialize an instance of class NewKeypad
 Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
@@ -127,22 +139,24 @@ void setup()
   menu.add_screen(chauffageScreen);
   menu.add_screen(chauffageModeScreen);
   menu.add_screen(channelScreen);
+  menu.add_screen(tvScreen);
+  
   menu.update();
 }
 
 void loop()
 {
-  char customKey = customKeypad.getKey();
+  customKey = customKeypad.getKey();
   debouncerRotaryButton.update();
-  int rotaryButtonValue = debouncerRotaryButton.read();
-  long positionRotary = rotaryButton.read();
+  rotaryButtonValue = debouncerRotaryButton.read();
+  positionRotary = rotaryButton.read();
 
   if (rotaryButtonValue == HIGH) {
     lastRotaryButtonValue = HIGH;
   }
 
   // switch on/off tv
-  if (customKey and currentMenu == HOME) {
+  if (customKey and isMenu(HOME)) {
     if (customKey == '3' || customKey == '0') {
       msgSwitch.setSensor(1);
       msgSwitch.setType(2);
@@ -153,7 +167,7 @@ void loop()
     }
   }
 
-  if (currentMenu == HOME and rotaryButtonValue == LOW and selectedMenuLine == 1) {
+  if (isMenu(HOME) and isButtonEncoderPressed() and selectedMenuLine == 1) {
     resetCursorMenu();
 
     lastRotaryButtonValue = LOW;
@@ -165,7 +179,7 @@ void loop()
     return;
   }
 
-  if (currentMenu == HOME and lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW and selectedMenuLine == 2) {
+  if (isMenu(HOME) and isButtonEncoderPressed() and selectedMenuLine == 2) {
     resetCursorMenu();
 
     lastRotaryButtonValue = LOW;
@@ -177,7 +191,7 @@ void loop()
     return;
   }
 
-  if (currentMenu == CHAUFFAGE and lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW) {
+  if (isMenu(CHAUFFAGE) and isButtonEncoderPressed()) {
     resetCursorMenu();
 
     lastRotaryButtonValue = LOW;
@@ -189,80 +203,37 @@ void loop()
     return;
   }
 
-  if (currentMenu == CHAUFFAGEMODE and lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW) {
+  if (isMenu(CHAUFFAGEMODE) and isButtonEncoderPressed()) {
     resetCursorMenu();
-
     lastRotaryButtonValue = LOW;
+    selectHeaterById(selectedHeaterId);
 
-    int sw1 = 0;
-    int sw2 = 0;
-
-    // salon gauche
-    if (selectedChauffage == 1) {
-      sw1 = 3;
-      sw2 = 4;
-    }
-
-    // salon droit
-    if (selectedChauffage == 2) {
-      sw1 = 5;
-      sw2 = 6;
-    }
-
-    // chambre
-    if (selectedChauffage == 3) {
-      sw1 = 1;
-      sw2 = 2;
-    }
-
-    // do nothing if chauffage not selected
+    // do nothing if heater is not selected
     if (sw1 == 0 or sw2 == 0) {
       return;
     }
 
     // stop
-    if (selectedChauffageMode == 1) {
-      msgSwitch.setSensor(sw1);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(0));
-      gw.wait(100);
-      msgSwitch.setSensor(sw2);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(0));
-      gw.wait(100);
+    if (selectedHeaterMode == 1) {
+      changeHeaterSwitch(sw1, sw2, 0, 0);
       return;
     }
 
     // eco
-    if (selectedChauffageMode == 2) {
-      msgSwitch.setSensor(sw1);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(0));
-      gw.wait(100);
-      msgSwitch.setSensor(2);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(1));
-      gw.wait(100);
+    if (selectedHeaterMode == 2) {
+      changeHeaterSwitch(sw1, sw2, 0, 1);
       return;
     }
 
     // confort
-    if (selectedChauffageMode == 3) {
-      msgSwitch.setSensor(sw1);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(1));
-      gw.wait(100);
-      msgSwitch.setSensor(sw2);
-      msgSwitch.setDestination(5);
-      gw.send(msgSwitch.set(0));
-      gw.wait(100);
+    if (selectedHeaterMode == 3) {
+      changeHeaterSwitch(sw1, sw2, 1, 0);
     }
-
 
     return;
   }
 
-  if (customKey and customKey == '6' and currentMenu == CHAUFFAGEMODE) {
+  if (customKey and customKey == '6' and isMenu(CHAUFFAGEMODE)) {
     resetCursorMenu();
     menu.change_screen(chauffageScreen);
     menu.update();
@@ -279,7 +250,7 @@ void loop()
     return;
   }
 
-  if (currentMenu == VOLUME  and lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW) {
+  if (isMenu(VOLUME) and isButtonEncoderPressed()) {
     lastRotaryButtonValue = LOW;
     Serial.println("mute/unmute volume");
     directionVolume = 'M';
@@ -309,7 +280,7 @@ void loop()
       direction = '-';
     }
 
-    if (currentMenu == HOME or currentMenu == CHAUFFAGE or currentMenu == CHAUFFAGEMODE) {
+    if (isMenu(HOME) or isMenu(CHAUFFAGE) or isMenu(CHAUFFAGEMODE)) {
       if (step < 1) {
         step = 1;
       }
@@ -347,18 +318,17 @@ void loop()
       selectedMenuLine = step;
     }
 
-    if (currentMenu == CHAUFFAGEMODE) {
-      selectedChauffageMode = selectedMenuLine;
+    if (isMenu(CHAUFFAGEMODE)) {
+      selectedHeaterMode = selectedMenuLine;
     }
 
-    if (currentMenu == CHAUFFAGE) {
-      selectedChauffage = selectedMenuLine;
+    if (isMenu(CHAUFFAGE)) {
+      selectedHeaterId = selectedMenuLine;
     }
 
-    if (currentMenu == VOLUME) {
+    if (isMenu(VOLUME)) {
       if (step == 2) {
         step = 1;
-        Serial.println("raise volume");
         directionVolume = '+';
         menu.update();
         msg.setSensor(1);
@@ -369,7 +339,6 @@ void loop()
 
       if (step == 0) {
         step = 1;
-        Serial.println("lower volume");
         directionVolume = '-';
         menu.update();
         msg.setSensor(1);
@@ -388,5 +357,47 @@ void resetCursorMenu()
   cursorMenuLine2 = ' ';
   cursorMenuLine3 = ' ';
   cursorMenuLine4 = ' ';
+}
+
+void changeHeaterSwitch(int sw1, int sw2, int sw1Value, int sw2Value)
+{
+  msgSwitch.setSensor(sw1);
+  msgSwitch.setDestination(5);
+  gw.send(msgSwitch.set(sw1Value));
+  gw.wait(100);
+  msgSwitch.setSensor(sw2);
+  msgSwitch.setDestination(5);
+  gw.send(msgSwitch.set(sw2Value));
+  gw.wait(100);
+}
+
+void selectHeaterById(int id)
+{
+  if (id == 1) {
+    sw1 = 3;
+    sw2 = 4;
+  }
+
+  // salon droit
+  if (id == 2) {
+    sw1 = 5;
+    sw2 = 6;
+  }
+
+  // chambre
+  if (id == 3) {
+    sw1 = 1;
+    sw2 = 2;
+  }
+}
+
+bool isButtonEncoderPressed()
+{
+  return lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW;
+}
+
+bool isMenu(byte menu)
+{
+  return currentMenu == menu;
 }
 
