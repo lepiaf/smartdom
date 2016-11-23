@@ -22,7 +22,7 @@ DHT dht(HUMIDITY_SENSOR_DIGITAL_PIN, DHT11);
 void setup()
 {
   dht.begin();
-  gw.begin(NULL, NODE_ID, false, 0);
+  gw.begin(NULL, NODE_ID, true);
   gw.sendSketchInfo("SDB", "1.0");
 
   // Register all sensors to gw (they will be created as child devices)
@@ -32,13 +32,12 @@ void setup()
 
 void loop()
 {
-  delay(4000);
-
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
   gw.send(msgHum.set(humidity, 1));
+  gw.wait(500);
   gw.send(msgTemp.set(temperature, 1));
   
-  gw.sleep(SLEEP_TIME); //sleep a bit
+  gw.wait(SLEEP_TIME); //sleep a bit
 }
