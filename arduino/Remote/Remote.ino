@@ -13,6 +13,7 @@
 #define MY_RF24_CE_PIN 8
 #define MY_RF24_PA_LEVEL RF24_PA_HIGH
 #define CHILD_ID_REMOTE 1
+#define LED_NOTIFICATION 13
 
 const byte LCD_RS = 12;
 const byte LCD_E = 11;
@@ -26,7 +27,7 @@ const byte ENCODER_PIN_SW = 6;
 const byte HOME = 0;
 const byte VOLUME = 1;
 const byte CHAUFFAGE = 2;
-const byte AUTRE = 3;
+const byte INTERRUPTEUR = 3;
 const byte CHAUFFAGEMODE = 4;
 const byte CHANNEL = 5;
 
@@ -67,29 +68,31 @@ LiquidMenu menu(lcd);
 // home screen
 LiquidLine home_line1(0, 0, cursorMenuLine1, "1.Telecommande");
 LiquidLine home_line2(0, 1, cursorMenuLine2, "2.Chauffage");
-LiquidLine home_line3(0, 2, cursorMenuLine3, "3.Autre");
-LiquidLine home_line4(0, 3, cursorMenuLine4, "Salon ON | OFF");
+LiquidLine home_line3(0, 2, cursorMenuLine3, "3.Interrupteur");
+LiquidLine home_line4(0, 3, cursorMenuLine4, "Salon | ON | OFF");
 LiquidScreen homeScreen(home_line1, home_line2, home_line3, home_line4);
 
-// tv screen
-LiquidLine tv_line1(0, 0, "1.BBOX");
-LiquidLine tv_line2(0, 1, "2.TV");
-LiquidLine tv_line3(0, 2, "");
-LiquidLine tv_line4(0, 3, "Retour | On | Off");
-LiquidScreen tvScreen(tv_line1, tv_line2, tv_line3, tv_line4);
+// interrupteur
+char* interrupteur_line4_message = "Retour |   | On/Off";
+LiquidLine interrupteur_line1(0, 0, cursorMenuLine1, "1.TV");
+LiquidLine interrupteur_line2(0, 1, cursorMenuLine2, "2.BBOX");
+LiquidLine interrupteur_line3(0, 2, cursorMenuLine3, "3.Port HDMI");
+LiquidLine interrupteur_line4(0, 3, cursorMenuLine4, interrupteur_line4_message);
+LiquidScreen interrupteurScreen(interrupteur_line1, interrupteur_line2, interrupteur_line3, interrupteur_line4);
 
 // volume screen
-LiquidLine volume_line1(1, 0, "Volume TV");
-LiquidLine volume_line2(1, 1, "Direction: ", directionVolume);
-LiquidLine volume_line3(1, 2, "");
-LiquidLine volume_line4(1, 3, "");
+char* messageMute = "Non";
+LiquidLine volume_line1(0, 0, ">Volume TV: ", directionVolume);
+LiquidLine volume_line2(0, 1, " Mute: ", messageMute);
+LiquidLine volume_line3(0, 2, " ");
+LiquidLine volume_line4(0, 3, " Retour| | Chaine TV");
 LiquidScreen volumeScreen(volume_line1, volume_line2, volume_line3, volume_line4);
 
 // change channel tv
-LiquidLine channel_line1(1, 0, "Chaine TV Box");
-LiquidLine channel_line2(1, 1, "Direction: ", directionChaine);
-LiquidLine channel_line3(1, 2, "");
-LiquidLine channel_line4(1, 3, "");
+LiquidLine channel_line1(0, 0, ">Chaine TV: ", directionChaine);
+LiquidLine channel_line2(0, 1, " Mute: ", messageMute);
+LiquidLine channel_line3(0, 2, " ");
+LiquidLine channel_line4(0, 3, " Retour | |  Vol TV");
 LiquidScreen channelScreen(channel_line1, channel_line2, channel_line3, channel_line4);
 
 // chauffage screen
@@ -130,6 +133,7 @@ void setup()
 
   lcd.begin(20, 4);
 
+  pinMode(LED_NOTIFICATION, OUTPUT);
   pinMode(ENCODER_PIN_SW, INPUT_PULLUP);
   debouncerRotaryButton.attach(ENCODER_PIN_SW);
   debouncerRotaryButton.interval(5);
@@ -139,8 +143,8 @@ void setup()
   menu.add_screen(chauffageScreen);
   menu.add_screen(chauffageModeScreen);
   menu.add_screen(channelScreen);
-  menu.add_screen(tvScreen);
-  
+  menu.add_screen(interrupteurScreen);
+
   menu.update();
 }
 
@@ -191,6 +195,18 @@ void loop()
     return;
   }
 
+  if (isMenu(HOME) and isButtonEncoderPressed() and selectedMenuLine == 3) {
+    resetCursorMenu();
+
+    lastRotaryButtonValue = LOW;
+    menu.change_screen(interrupteurScreen);
+    menu.update();
+    currentMenu = INTERRUPTEUR;
+    delay(200);
+
+    return;
+  }
+
   if (isMenu(CHAUFFAGE) and isButtonEncoderPressed()) {
     resetCursorMenu();
 
@@ -233,32 +249,70 @@ void loop()
     return;
   }
 
-  if (customKey and customKey == '6' and isMenu(CHAUFFAGEMODE)) {
-    resetCursorMenu();
-    menu.change_screen(chauffageScreen);
-    menu.update();
-    currentMenu = CHAUFFAGE;
-    return;
-  }
+  if (customKey) {
+    if (isMenu(INTERRUPTEUR)) {
+      if (customKey == '0') {
+        // send on/off
+        if (selectedMenuLine == 1) {
+          sendCommand(3, 1, 0);
+          notify();
 
-  if (customKey and customKey == '6') {
-    resetCursorMenu();
+          return;
+        }
 
-    menu.change_screen(homeScreen);
-    menu.update();
-    currentMenu = HOME;
-    return;
+        if (selectedMenuLine == 2) {
+          sendCommand(3, 3, 1);
+          notify();
+
+          return;
+        }
+      }
+
+      // select chromecast
+      if (selectedMenuLine == 3 and customKey == '3') {
+        sendCommand(3, 5, 4);
+        notify();
+
+        return;
+      }
+
+      // select bbox
+      if (selectedMenuLine == 3 and customKey == '0') {
+        sendCommand(3, 5, 1);
+        notify();
+
+        return;
+      }
+    }
+
+
+    if (customKey == '6') {
+      resetCursorMenu();
+      notify();
+
+      if (isMenu(CHAUFFAGEMODE)) {
+        menu.change_screen(chauffageScreen);
+        menu.update();
+        currentMenu = CHAUFFAGE;
+
+        return;
+      }
+
+      menu.change_screen(homeScreen);
+      menu.update();
+      currentMenu = HOME;
+
+      return;
+    }
   }
 
   if (isMenu(VOLUME) and isButtonEncoderPressed()) {
     lastRotaryButtonValue = LOW;
     Serial.println("mute/unmute volume");
-    directionVolume = 'M';
+    toggleMessageMute();
+
     menu.update();
-    msg.setSensor(1);
-    msg.setDestination(3);
-    gw.send(msg.set(2));
-    gw.wait(10);
+    sendCommand(3, 1, 2);
     return;
   }
 
@@ -280,7 +334,12 @@ void loop()
       direction = '-';
     }
 
-    if (isMenu(HOME) or isMenu(CHAUFFAGE) or isMenu(CHAUFFAGEMODE)) {
+    if (
+      isMenu(HOME) or
+      isMenu(CHAUFFAGE) or
+      isMenu(CHAUFFAGEMODE) or
+      isMenu(INTERRUPTEUR)
+    ) {
       if (step < 1) {
         step = 1;
       }
@@ -313,6 +372,8 @@ void loop()
       }
 
       if (step != selectedMenuLine) {
+        updateMenuInterrupteur(step);
+        notify();
         menu.update();
       }
       selectedMenuLine = step;
@@ -353,6 +414,7 @@ void loop()
 void resetCursorMenu()
 {
   selectedMenuLine = 1;
+  step = 1;
   cursorMenuLine1 = '>';
   cursorMenuLine2 = ' ';
   cursorMenuLine3 = ' ';
@@ -369,6 +431,7 @@ void changeHeaterSwitch(int sw1, int sw2, int sw1Value, int sw2Value)
   msgSwitch.setDestination(5);
   gw.send(msgSwitch.set(sw2Value));
   gw.wait(100);
+  notify();
 }
 
 void selectHeaterById(int id)
@@ -389,11 +452,18 @@ void selectHeaterById(int id)
     sw1 = 1;
     sw2 = 2;
   }
+
+  notify();
 }
 
 bool isButtonEncoderPressed()
 {
-  return lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW;
+  if (lastRotaryButtonValue == HIGH and rotaryButtonValue == LOW) {
+    notify();
+    return true;
+  }
+
+  return false;
 }
 
 bool isMenu(byte menu)
@@ -401,3 +471,39 @@ bool isMenu(byte menu)
   return currentMenu == menu;
 }
 
+void sendCommand(int node, int sensor, int payload) {
+  msg.setSensor(sensor);
+  msg.setDestination(node);
+  gw.send(msg.set(payload));
+  gw.wait(100);
+  notify();
+
+  return;
+}
+
+void notify() {
+  digitalWrite(LED_NOTIFICATION, HIGH);
+  delay(250);
+  digitalWrite(LED_NOTIFICATION, LOW);
+}
+
+void updateMenuInterrupteur(int* step) {
+  if (isMenu(INTERRUPTEUR)) {
+    interrupteur_line4_message = "Retour |   | On/Off";
+    if (step == 3) {
+      interrupteur_line4_message = "Retour | G | BBOX";
+    }
+
+    return;
+  }
+}
+
+void toggleMessageMute() {
+  if (messageMute == "Non") {
+    messageMute = "Oui";
+
+    return;
+  }
+
+  messageMute = "Non";
+}
