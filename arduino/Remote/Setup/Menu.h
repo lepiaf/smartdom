@@ -44,7 +44,7 @@ LiquidScreen volumeScreen(volume_line1, volume_line2, volume_line3, volume_line4
 
 // change channel tv
 LiquidLine channel_line1(0, 0, ">Chaine TV: ", directionChaine);
-LiquidLine channel_line2(0, 1, " Mute: ", messageMute);
+LiquidLine channel_line2(0, 1, " ");
 LiquidLine channel_line3(0, 2, " ");
 LiquidLine channel_line4(0, 3, " Retour | |  Vol TV");
 LiquidScreen channelScreen(channel_line1, channel_line2, channel_line3, channel_line4);
