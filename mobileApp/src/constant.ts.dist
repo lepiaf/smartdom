@@ -1,0 +1,4 @@
+export class Constant {
+   public static get API_ENDPOINT(): string { return 'https://my host/api'; }
+   public static get TOKEN(): string { return 'some token' }
+}

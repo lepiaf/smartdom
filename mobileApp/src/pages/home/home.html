@@ -7,16 +7,16 @@
 <ion-content>
   <ion-item-group>
     <ion-item-divider color="light">Salon</ion-item-divider>
-    <ion-item>Température <span item-right>20°C</span></ion-item>
-    <ion-item>Humidité <span item-right>30%</span></ion-item>
-    <ion-item>Salon Gauche <span item-right>eco</span></ion-item>
-    <ion-item>Salon Droite <span item-right>eco</span></ion-item>
+    <ion-item>Température <span item-right>{{livingroom.temperature}}°C</span></ion-item>
+    <ion-item>Humidité <span item-right>{{livingroom.humidity}}%</span></ion-item>
+    <ion-item>Salon Gauche <span item-right>{{livingroom.heaters.left}}</span></ion-item>
+    <ion-item>Salon Droite <span item-right>{{livingroom.heaters.right}}</span></ion-item>
   </ion-item-group>
   <ion-item-group>
     <ion-item-divider color="light">Chambre</ion-item-divider>
-    <ion-item>Température <span item-right>18°C</span></ion-item>
-    <ion-item>Humidité <span item-right>20%</span></ion-item>
-    <ion-item>Chambre <span item-right>stop</span></ion-item>
+    <ion-item>Température <span item-right>{{bedroom.temperature}}°C</span></ion-item>
+    <ion-item>Humidité <span item-right>{{bedroom.humidity}}%</span></ion-item>
+    <ion-item>Chambre <span item-right>{{bedroom.heater}}</span></ion-item>
   </ion-item-group>
   <ion-item-group>
     <ion-item-divider color="light">Electricité</ion-item-divider>
