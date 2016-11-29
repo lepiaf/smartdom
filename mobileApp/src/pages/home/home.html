@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Acueil</ion-title>
+    <ion-title>Accueil</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -9,14 +9,14 @@
     <ion-item-divider color="light">Salon</ion-item-divider>
     <ion-item>Température <span item-right>{{livingroom.temperature}}°C</span></ion-item>
     <ion-item>Humidité <span item-right>{{livingroom.humidity}}%</span></ion-item>
-    <ion-item>Salon Gauche <span item-right>{{livingroom.heaters.left}}</span></ion-item>
-    <ion-item>Salon Droite <span item-right>{{livingroom.heaters.right}}</span></ion-item>
+    <ion-item (click)="displayHeaterMode('salonGauche')">Salon Gauche <span item-right>{{livingroom.heaters.left}}</span></ion-item>
+    <ion-item (click)="displayHeaterMode('salonDroite')">Salon Droite <span item-right>{{livingroom.heaters.right}}</span></ion-item>
   </ion-item-group>
   <ion-item-group>
     <ion-item-divider color="light">Chambre</ion-item-divider>
     <ion-item>Température <span item-right>{{bedroom.temperature}}°C</span></ion-item>
     <ion-item>Humidité <span item-right>{{bedroom.humidity}}%</span></ion-item>
-    <ion-item>Chambre <span item-right>{{bedroom.heater}}</span></ion-item>
+    <ion-item (click)="displayHeaterMode('chambre')">Chambre <span item-right>{{bedroom.heater}}</span></ion-item>
   </ion-item-group>
   <ion-item-group>
     <ion-item-divider color="light">Electricité</ion-item-divider>

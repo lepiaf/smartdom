@@ -4,6 +4,7 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LivingroomPage } from '../pages/livingroom/livingroom';
 import { BedroomPage } from '../pages/bedroom/bedroom';
+import { BboxPage } from '../pages/bbox/bbox';
 import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
@@ -12,6 +13,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     HomePage,
     LivingroomPage,
     BedroomPage,
+    BboxPage,
     TabsPage
   ],
   imports: [
@@ -23,6 +25,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     HomePage,
     LivingroomPage,
     BedroomPage,
+    BboxPage,
     TabsPage
   ],
   providers: []
