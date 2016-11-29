@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, ToastController } from 'ionic-angular';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 import {Constant} from '../../constant';
 import { ActionSheetController } from 'ionic-angular';
 import { BboxPage } from '../bbox/bbox';
+import { HdmiPage } from '../hdmi/hdmi';
+import { TvPage } from '../tv/tv';
 import { ModalController } from 'ionic-angular';
 
 @Component({
@@ -28,7 +30,8 @@ export class LivingroomPage {
   constructor(
     http: Http, nav: NavController,
     public actionSheetCtrl: ActionSheetController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public toastCtrl: ToastController
   ) {
     this.http = http;
     this.getTemperature();
@@ -40,8 +43,18 @@ export class LivingroomPage {
     });
   }
 
-  public presentModal() {
+  public presentModalBbox() {
     let modal = this.modalCtrl.create(BboxPage);
+    modal.present();
+  }
+
+  public presentModalHdmi() {
+    let modal = this.modalCtrl.create(HdmiPage);
+    modal.present();
+  }
+
+  public presentModalTv() {
+    let modal = this.modalCtrl.create(TvPage);
     modal.present();
   }
 
@@ -133,7 +146,17 @@ export class LivingroomPage {
     this.http.put(Constant.API_ENDPOINT+"/heaters/"+room, JSON.stringify(body), options)
       .subscribe(data => {
         this.getHeater();
+        this.displayToastHeater(room, mode);
       });
+  }
+
+  private displayToastHeater(room: string, mode: string)
+  {
+    let toast = this.toastCtrl.create({
+      message: "Chauffage "+this.getLabelForHeaterRoom(room)+ " en mode "+mode,
+      duration: 3000
+    });
+    toast.present();
   }
 
   private getLabelForHeaterRoom(room: string)

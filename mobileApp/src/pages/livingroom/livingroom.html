@@ -27,13 +27,13 @@
         <ion-grid>
           <ion-row>
             <ion-col width-33>
-              <button ion-button block>HDMI</button>
+              <button ion-button block (click)="presentModalHdmi()">HDMI</button>
             </ion-col>
             <ion-col width-33>
-              <button ion-button block>TV</button>
+              <button ion-button block (click)="presentModalTv()">TV</button>
             </ion-col>
             <ion-col width-33>
-              <button ion-button block (click)="presentModal()">BBOX</button>
+              <button ion-button block (click)="presentModalBbox()">BBOX</button>
             </ion-col>
           </ion-row>
         </ion-grid>

@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Télécommande HDMI</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline icon-left block (click)="sendButton(5, 0)">Blue-Ray</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline icon-left block (click)="sendButton(5, 1)">BBox</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline icon-left block (click)="sendButton(5, 2)">n/a</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline icon-left block (click)="sendButton(5, 3)">PC Portable</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline icon-left block (click)="sendButton(5, 4)">Chromcast</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

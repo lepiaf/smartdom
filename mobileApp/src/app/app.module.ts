@@ -5,7 +5,9 @@ import { HomePage } from '../pages/home/home';
 import { LivingroomPage } from '../pages/livingroom/livingroom';
 import { BedroomPage } from '../pages/bedroom/bedroom';
 import { BboxPage } from '../pages/bbox/bbox';
+import { HdmiPage } from '../pages/hdmi/hdmi';
 import { TabsPage } from '../pages/tabs/tabs';
+import { TvPage } from '../pages/tv/tv';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,8 @@ import { TabsPage } from '../pages/tabs/tabs';
     LivingroomPage,
     BedroomPage,
     BboxPage,
+    HdmiPage,
+    TvPage,
     TabsPage
   ],
   imports: [
@@ -26,6 +30,8 @@ import { TabsPage } from '../pages/tabs/tabs';
     LivingroomPage,
     BedroomPage,
     BboxPage,
+    HdmiPage,
+    TvPage,
     TabsPage
   ],
   providers: []
