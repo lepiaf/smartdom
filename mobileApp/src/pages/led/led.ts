@@ -4,11 +4,11 @@ import { RoomProvider } from '../../providers/room-provider';
 import { Remote } from '../remote';
 
 @Component({
-  selector: 'page-hdmi',
-  templateUrl: 'hdmi.html'
+  selector: 'page-led',
+  templateUrl: 'led.html'
 })
 
-export class HdmiPage extends Remote {
+export class LedPage extends Remote {
   constructor(
     public room: RoomProvider,
     nav: NavController,

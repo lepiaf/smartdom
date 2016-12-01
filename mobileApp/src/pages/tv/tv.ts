@@ -1,31 +1,20 @@
 import { Component } from '@angular/core';
-import { NavController, ViewController } from 'ionic-angular';
-import {Http, Headers, RequestOptions} from '@angular/http';
-import {Constant} from '../../constant';
+import { NavController, ViewController, ToastController } from 'ionic-angular';
+import { RoomProvider } from '../../providers/room-provider';
+import { Remote } from '../remote';
 
 @Component({
   selector: 'page-tv',
-  templateUrl: 'tv.html',
-  providers: [Constant]
+  templateUrl: 'tv.html'
 })
-export class TvPage {
-  private http;
-  constructor(http: Http, nav: NavController, public viewCtrl: ViewController) {
-    this.http = http;
-  }
 
-  public sendButton(remoteId: number, button: number)
-  {
-    let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': Constant.TOKEN});
-    let options = new RequestOptions({ headers: headers });
-    let body = {button: button};
-
-    this.http.put(Constant.API_ENDPOINT+"/nodes/3/remotes/"+remoteId, JSON.stringify(body), options)
-      .subscribe(data => {
-      });
-  }
-
-  public dismiss() {
-    this.viewCtrl.dismiss();
+export class TvPage extends Remote {
+  constructor(
+    public room: RoomProvider,
+    nav: NavController,
+    public viewCtrl: ViewController,
+    public toastCtrl: ToastController,
+  ) {
+    super(room, nav, viewCtrl, toastCtrl);
   }
 }

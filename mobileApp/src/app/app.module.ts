@@ -8,6 +8,10 @@ import { BboxPage } from '../pages/bbox/bbox';
 import { HdmiPage } from '../pages/hdmi/hdmi';
 import { TabsPage } from '../pages/tabs/tabs';
 import { TvPage } from '../pages/tv/tv';
+import { LedPage } from '../pages/led/led';
+import { ApiProvider } from '../providers/api-provider';
+import { HeaterProvider } from '../providers/heater-provider';
+import { RoomProvider } from '../providers/room-provider';
 
 @NgModule({
   declarations: [
@@ -18,6 +22,7 @@ import { TvPage } from '../pages/tv/tv';
     BboxPage,
     HdmiPage,
     TvPage,
+    LedPage,
     TabsPage
   ],
   imports: [
@@ -32,8 +37,9 @@ import { TvPage } from '../pages/tv/tv';
     BboxPage,
     HdmiPage,
     TvPage,
+    LedPage,
     TabsPage
   ],
-  providers: []
+  providers: [ApiProvider, HeaterProvider, RoomProvider]
 })
 export class AppModule {}
