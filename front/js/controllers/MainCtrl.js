@@ -23,9 +23,9 @@ angular.module('MainCtrl', []).controller('MainController', [
             NodeService.getNodesSensorTemperature(4,5).then(function(res){
                 $scope.temperature.salon = res.data.last;
 
-                // NodeService.getNodesSensorTemperature(0,3).then(function(res){
-                //     $scope.temperature.chambre = res.data.last;
-                // });
+                NodeService.getNodesSensorTemperature(7,3).then(function(res){
+                     $scope.temperature.chambre = res.data.last;
+                 });
             });
 
             HeaterService.resource.getHeaterMode("chambre").then(function(res) {

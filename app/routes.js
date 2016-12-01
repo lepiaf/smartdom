@@ -13,7 +13,8 @@ module.exports = function(app, eventEmitter, influxClient) {
     heaterController.influxClient = influxClient;
     heaterController.eventEmitter = eventEmitter;
 
-    app.post('/api/kodi', passport.authenticate('jwt', {session:false}), kodiController.post);
+    app.get('/api/power', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsPower);
+    app.get('/api/power/period', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsPeriodPower);
 
     app.put('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.putHeaterMode);
     app.get('/api/heaters/:room', passport.authenticate('jwt', {session:false}), heaterController.getHeaterMode);
@@ -27,6 +28,7 @@ module.exports = function(app, eventEmitter, influxClient) {
     app.get('/api/nodes/:node/sensors/:sensor', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensors);
 
     app.get('/api/nodes/:node/sensors/:sensor/temperature', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsTemperature);
+    app.get('/api/nodes/:node/sensors/:sensor/humidity', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsHumidity);
     app.get('/api/nodes/:node/sensors/:sensor/state', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsState);
 
     app.post('/api/signup', userController.signup);

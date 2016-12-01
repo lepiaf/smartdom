@@ -36,6 +36,14 @@ app.use(express.static(__dirname + '/public')); // set the static files location
 app.use(compression());
 app.use(morgan('dev'));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
+
+
 app.use(passport.initialize());
 require('./app/authentication')(passport);
 
@@ -62,7 +70,7 @@ sp.on('error', function(data){
 sp.on('open', function(){
     sp.on('data', function(data) {
         var sensorData = MySensors.parse(data);
-        sensorData.payload = parseFloat(sensorData.payload);
+        sensorData.payload = isNaN(sensorData.payload) ? sensorData.payload : parseFloat(sensorData.payload);
 
         if (sensorData.messageType === "internal") {
             return;
