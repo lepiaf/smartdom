@@ -97,7 +97,6 @@ export class BaseHomePage {
   }
 
   public sendButton(nodeId: number, sensorId: number, button: number) {
-    console.log('send button');
     this.room.sendButton(nodeId, sensorId, button).subscribe(data => {
       let toast = this.toastCtrl.create({
         message: "Bouton appuyé"  ,
@@ -108,7 +107,6 @@ export class BaseHomePage {
   }
 
   public updateSwitchState(nodeId: number, sensorId: number, button: number) {
-    console.log("update switch");
     this.room.updateSwitchState(nodeId, sensorId, button).subscribe(data => {
       let toast = this.toastCtrl.create({
         message: "Interrupteur "+(button === 1 ? 'allumé' : 'éteint'),
