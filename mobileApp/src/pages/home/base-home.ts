@@ -32,11 +32,13 @@ export class BaseHomePage {
 
   public init() {
     this.getTemperature();
+    this.getHumidity();
     this.getHeater();
     Observable.interval(15000)
       .subscribe((x) => {
         this.getTemperature();
         this.getHeater();
+        this.getHumidity();
       });
   }
 
@@ -79,6 +81,13 @@ export class BaseHomePage {
     this.room.getTemperatures().then((data: any) => {
       this.livingroom.temperature = data.livingroom;
       this.bedroom.temperature = data.bedroom;
+    });
+  }
+
+  public getHumidity() {
+    this.room.getHumidities().then((data: any) => {
+      this.livingroom.humidity = data.livingroom;
+      this.bedroom.humidity = data.bedroom;
     });
   }
 

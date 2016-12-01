@@ -9,6 +9,11 @@ export class RoomProvider {
     bedroom: 0
   }
 
+  public humidities = {
+    livingroom: 0,
+    bedroom: 0
+  }
+
   constructor(public api: ApiProvider) {}
 
   public getTemperatures() {
@@ -29,6 +34,34 @@ export class RoomProvider {
 
   public getTemperature(nodeId: number, sensorId: number) {
     return this.api.get("/nodes/"+nodeId+"/sensors/"+sensorId+"/temperature");
+  }
+
+  public getHumidities() {
+    return new Promise((resolve,reject) => {
+      this.api.get("/nodes/4/sensors/4/humidity")
+        .subscribe(data => {
+          this.humidities.livingroom = data.json().last;
+
+          this.api.get("/nodes/7/sensors/2/humidity")
+            .subscribe(data => {
+              this.humidities.bedroom = data.json().last;
+
+              resolve(this.humidities);
+            });
+          });
+    });
+  }
+
+  public getHumidity(nodeId: number, sensorId: number) {
+    return this.api.get("/nodes/"+nodeId+"/sensors/"+sensorId+"/humidity");
+  }
+
+  public getPower() {
+    return this.api.get("/power");
+  }
+
+  public getPowerPeriod() {
+    return this.api.get("/power/period");
   }
 
   public updateSwitchState(nodeId: number, sensorId: number, state: number) {

@@ -4,6 +4,7 @@ import { ActionSheetController } from 'ionic-angular';
 import { HeaterProvider } from '../../providers/heater-provider';
 import { RoomProvider } from '../../providers/room-provider';
 import { BaseHomePage } from './base-home';
+import { Observable } from 'rxjs/Rx';
 
 @Component({
   selector: 'page-home',
@@ -11,6 +12,9 @@ import { BaseHomePage } from './base-home';
 })
 
 export class HomePage extends BaseHomePage {
+  public power;
+  public powerPeriod;
+
   constructor(
     nav: NavController,
     public actionSheetCtrl: ActionSheetController,
@@ -21,5 +25,25 @@ export class HomePage extends BaseHomePage {
     super(nav, actionSheetCtrl, toastCtrl, heater, room);
 
     this.init();
+    
+    this.getPower();
+    this.getPowerPeriod();
+    Observable.interval(15000)
+      .subscribe((x) => {
+        this.getPower();
+        this.getPowerPeriod();
+      });
+  }
+
+  public getPower() {
+    this.room.getPower().subscribe(data => {
+      this.power = data.json().last;
+    })
+  }
+
+  public getPowerPeriod() {
+    this.room.getPowerPeriod().subscribe(data => {
+      this.powerPeriod = data.json().last;
+    })
   }
 }
