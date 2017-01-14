@@ -17,7 +17,7 @@ export class ApiProvider {
   }
 
   public post(url: string, data: Object) {
-    return this.http.put(this.getUrl(url), JSON.stringify(data), this.getRequestOptions());
+    return this.http.post(this.getUrl(url), JSON.stringify(data), this.getRequestOptions());
   }
 
   private getUrl(url: string) {

@@ -23,4 +23,12 @@
     <ion-item>Période <span item-right>{{powerPeriod}}</span></ion-item>
     <ion-item>Puissance <span item-right>{{power}} kWh</span></ion-item>
   </ion-item-group>
+  <ion-item-group>
+    <ion-item-divider color="light">Afficheur LED</ion-item-divider>
+    <ion-item>
+    <ion-label fixed>Message</ion-label>
+    <ion-input [(ngModel)]="message" ></ion-input>
+    </ion-item>
+    <button ion-button block (click)="submit()">Envoyer</button>
+  </ion-item-group>
 </ion-content>

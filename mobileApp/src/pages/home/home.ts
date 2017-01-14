@@ -14,7 +14,7 @@ import { Observable } from 'rxjs/Rx';
 export class HomePage extends BaseHomePage {
   public power;
   public powerPeriod;
-
+  public message;
   constructor(
     nav: NavController,
     public actionSheetCtrl: ActionSheetController,
@@ -25,7 +25,7 @@ export class HomePage extends BaseHomePage {
     super(nav, actionSheetCtrl, toastCtrl, heater, room);
 
     this.init();
-    
+
     this.getPower();
     this.getPowerPeriod();
     Observable.interval(15000)
@@ -33,6 +33,17 @@ export class HomePage extends BaseHomePage {
         this.getPower();
         this.getPowerPeriod();
       });
+  }
+
+  public submit() {
+    this.room.postMessage(this.message).subscribe(data => {
+      let toast = this.toastCtrl.create({
+        message: "Message envoyé"  ,
+        duration: 3000
+      });
+      toast.present();
+    });
+
   }
 
   public getPower() {

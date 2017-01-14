@@ -13,7 +13,7 @@ module.exports = function(app, eventEmitter, influxClient) {
     heaterController.influxClient = influxClient;
     heaterController.eventEmitter = eventEmitter;
 
-    app.get('/api/message', passport.authenticate('jwt', {session:false}), nodeController.postMessage);
+    app.post('/api/message', passport.authenticate('jwt', {session:false}), nodeController.postMessage);
     app.get('/api/power', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsPower);
     app.get('/api/power/period', passport.authenticate('jwt', {session:false}), nodeController.getNodesSensorsPeriodPower);
 

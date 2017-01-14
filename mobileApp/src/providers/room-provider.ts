@@ -64,6 +64,12 @@ export class RoomProvider {
     return this.api.get("/power/period");
   }
 
+  public postMessage(message: any) {
+    let body = {message: message};
+
+    return this.api.post("/message", body);
+  }
+
   public updateSwitchState(nodeId: number, sensorId: number, state: number) {
     let body = {state: state};
 
