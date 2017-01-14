@@ -9,7 +9,7 @@ module.exports = {
     eventEmitter: null,
     postMessage: function (req, res) {
       request.post({
-          url: 'http://pi.home.lan/message',
+          url: 'http://pi.home.lan:5000/message',
           json: req.body
       }, function (err, resp, body) {
           res.send(resp);
