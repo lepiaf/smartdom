@@ -2,10 +2,19 @@ var _ = require('lodash');
 var async = require('async');
 var MySensors = require('../services/MySensors');
 var nodesDb = require('../../config/nodes.js');
+var request = require('request');
 
 module.exports = {
     influxClient: null,
     eventEmitter: null,
+    postMessage: function (req, res) {
+      request.post({
+          url: 'http://pi.home.lan/message',
+          json: req.body
+      }, function (err, resp, body) {
+          res.send(resp);
+      });
+    },
     putNodesSensorsRemote: function (req, res) {
         nodesDb.repository.findSensor(req.params.node, req.params.sensor, function(err, sensor) {
             if (err) {
