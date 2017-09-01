@@ -72,7 +72,7 @@ sp.on('open', function(){
         var sensorData = MySensors.parse(data);
         sensorData.payload = isNaN(sensorData.payload) ? sensorData.payload : parseFloat(sensorData.payload);
 
-        if (sensorData.messageType === "internal") {
+        if (sensorData.messageType === "internal" || sensorData.childSensorId >= 255) {
             return;
         }
 
@@ -83,9 +83,17 @@ sp.on('open', function(){
             childSensorId: sensorData.childSensorId,
             time : new Date()
         };
+	    
+        if (sensorData.subType === "V_KWH" || sensorData.subType === "V_WATT") {
+	    influxPoint.payloadFloat = parseFloat(influxPoint.payload);
+            delete influxPoint.payload;
+        }
+
         console.info("influx point: "+JSON.stringify(influxPoint));
 
-        influxClient.writePoint(sensorData.subType, influxPoint, null, function(err, response) {});
+        influxClient.writePoint(sensorData.subType, influxPoint, null, function(err, response) {
+	    if (err) {console.error(err);}
+	});
     });
 
     eventEmitter.on('mysensors_send_message', function (message){
