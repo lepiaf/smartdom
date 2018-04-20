@@ -2,9 +2,14 @@
 
 var nodes =  [
     {
-        id: 0,
-        name: "Chambre",
+        id: 8,
+        name: "LED strip",
         sensors: [
+            {
+                id: 6,
+                name: "Remote",
+                type:"remote"
+            },
             {
                 id: 2,
                 name: "Humidité",
@@ -72,6 +77,11 @@ var nodes =  [
                 id: 3,
                 name: "BBox",
                 type: "remote"
+            },
+            {
+                id:5,
+                name:"HDMI Switch",
+                type:"remote"
             }
         ]
     },
@@ -88,52 +98,6 @@ var nodes =  [
                 id: 5,
                 name: "Température",
                 type: "sensor"
-            }
-        ]
-    },
-    {
-        id: 5,
-        name: "Chauffage",
-        sensors: [
-            {
-                "id" : 1,
-                "name" : "Relay 1",
-                "type" : "actuator"
-            },
-            {
-                "id" : 2,
-                "name" : "Relay 2",
-                "type" : "actuator"
-            },
-            {
-                "id" : 3,
-                "name" : "Relay 3",
-                "type" : "actuator"
-            },
-            {
-                "id" : 4,
-                "name" : "Relay 4",
-                "type" : "actuator"
-            },
-            {
-                "id" : 5,
-                "name" : "Relay 5",
-                "type" : "actuator"
-            },
-            {
-                "id" : 6,
-                "name" : "Relay 6",
-                "type" : "actuator"
-            },
-            {
-                "id" : 7,
-                "name" : "Relay 7",
-                "type" : "actuator"
-            },
-            {
-                "id" : 8,
-                "name" : "Relay 8",
-                "type" : "actuator"
             }
         ]
     }

@@ -1,66 +1,30 @@
-// modules =================================================
-var express        = require('express');
-var app            = express();
-var bodyParser     = require('body-parser');
-var methodOverride = require('method-override');
-var SerialPort     = require('serialport');
-var influx         = require('influx');
-var events         = require('events');
-var MySensors      = require('./app/services/MySensors');
-var weather        = require('openweathermap');
-var schedule       = require('node-schedule');
-var heaterController = require('./app/controllers/heaterController');
-var config = require('./config/config');
-var morgan = require('morgan');
-var passport = require('passport');
-var jwt = require('jwt-simple');
-var async = require('async');
-var compression = require("compression");
-var schedule = require('node-schedule');
-
-var eventEmitter = new events.EventEmitter();
-var influxClient = influx({
+let SerialPort = require('serialport');
+let Influx = require('influx');
+let events = require('events');
+let MySensors = require('./app/services/MySensors');
+let weather = require('openweathermap');
+let config = require('./config/config');
+let schedule = require('node-schedule');
+let mqtt = require('mqtt');
+let eventEmitter = new events.EventEmitter();
+let influxClient = new Influx.InfluxDB({
     host : config.influxdb.smartdom.host,
     username : config.influxdb.smartdom.username,
     password : config.influxdb.smartdom.password,
     database : config.influxdb.smartdom.database
 });
 
-// get all data/stuff of the body (POST) parameters
-app.use(bodyParser.json()); // parse application/json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
+console.log('Smartdom is ready');
 
-app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
-app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
-app.use(compression());
-app.use(morgan('dev'));
-
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
-
-
-app.use(passport.initialize());
-require('./app/authentication')(passport);
-
-// routes ==================================================
-require('./app/routes')(app, eventEmitter, influxClient); // pass our application into our routes
-
-// start app ===============================================
-app.listen(config.port);
-console.log('Smartdom is ready on port: ' + config.port);
-exports = module.exports = app;
-
+let mqttClient = mqtt.connect(config.mqtt);
 // handle message from mysensors gateway ===================
-var sp = new SerialPort(config.arduino, {
-    parser: SerialPort.parsers.readline("\n"),
-    baudrate: 115200,
+const Readline = SerialPort.parsers.Readline;
+const parser = new Readline();
+let sp = new SerialPort(config.arduino, {
+    baudRate: 115200,
     autoOpen: true
 });
+sp.pipe(parser);
 
 sp.on('error', function(data){
     // do nothing
@@ -68,20 +32,19 @@ sp.on('error', function(data){
 });
 
 sp.on('open', function(){
-    sp.on('data', function(data) {
-        var sensorData = MySensors.parse(data);
+    parser.on('data', function(data) {
+        let sensorData = MySensors.parse(data);
         sensorData.payload = isNaN(sensorData.payload) ? sensorData.payload : parseFloat(sensorData.payload);
 
         if (sensorData.messageType === "internal" || sensorData.childSensorId >= 255) {
             return;
         }
 
-        var influxPoint = {
+        let influxPoint = {
             nodeId: sensorData.nodeId,
             payload: sensorData.payload,
             subType: sensorData.subType,
-            childSensorId: sensorData.childSensorId,
-            time : new Date()
+            childSensorId: sensorData.childSensorId
         };
 	    
         if (sensorData.subType === "V_KWH" || sensorData.subType === "V_WATT") {
@@ -91,30 +54,63 @@ sp.on('open', function(){
 
         console.info("influx point: "+JSON.stringify(influxPoint));
 
-        influxClient.writePoint(sensorData.subType, influxPoint, null, function(err, response) {
-	    if (err) {console.error(err);}
-	});
+        influxClient.writePoints([{
+            measurement: sensorData.subType,
+            fields: influxPoint
+        }]).catch(err => {
+            console.error(`Error saving data to InfluxDB! ${err.stack}`)
+        });
+
+        if (mqttClient.connected) {
+            mqttClient.publish('mysensors/'+influxPoint.nodeId+'/'+influxPoint.childSensorId, JSON.stringify(influxPoint));
+        } else {
+            console.error('Not connected to MQTT broker');
+        }
     });
 
     eventEmitter.on('mysensors_send_message', function (message){
+        if (mqttClient.connected) {
+            let mysensorsMsg = MySensors.parse(message);
+            mysensorsMsg.payload = mysensorsMsg.payload.split("\n")[0];
+            mqttClient.publish('mysensors/' + mysensorsMsg.nodeId + '/' + mysensorsMsg.childSensorId, JSON.stringify(mysensorsMsg));
+        }
+
         console.info("mysensor message: "+ message);
         sp.write(message, function(err, res) {});
     });
 
-    eventEmitter.on('mysensors_send_message_heater', function (message1, message2){
-        console.info("mysensor message heater: "+ message1);
-        console.info("mysensor message heater: "+ message2);
-
-        sp.write(message1, function(err, res) {
-            setTimeout(function(){
-                sp.write(message2, function(err, res) {});
-            }, 200);
-        });
+    mqttClient.on('connect', function () {
+        mqttClient.subscribe('mysensors/led');
+        mqttClient.subscribe('mysensors/switch');
+        mqttClient.subscribe('refresh');
     });
 });
 
+mqttClient.on('message', function (topic, message) {
+    console.log("[MQTT message] "+topic+" "+message.toString());
+
+    if (topic === "mysensors/led") {
+        eventEmitter.emit("mysensors_send_message", "8;6;1;0;20;"+message.toString()+"\n");
+    }
+
+    if (topic === "mysensors/switch") {
+        eventEmitter.emit("mysensors_send_message", "2;1;1;0;2;"+message.toString()+"\n");
+    }
+
+    if (topic === "refresh") {
+        eventEmitter.emit("smartdom_send_current_state_sensors");
+    }
+});
+
+eventEmitter.on('smartdom_send_current_state_sensors', () => {
+    influxClient.query('select last(payloadFloat), time from V_WATT')
+        .then(result => {
+            mqttClient.publish('mysensors/1/4', JSON.stringify({payloadFloat:result[0].last}));
+        })
+});
+
 // handle message from weather api =========================
-var influxClientWeather = influx({
+let influxClientWeather = new Influx.InfluxDB({
     host : config.influxdb.weather.host,
     username : config.influxdb.weather.username,
     password : config.influxdb.weather.password,
@@ -126,7 +122,7 @@ weather.defaults({units:'metric', lang:'fr', mode:'json', APPID: config.openweat
 setInterval(function(){
     try {
         weather.now({id: config.openweathermap.city}, function (err, data) {
-            var influxPoint = {
+            const influxPoint = {
                 main: data.weather[0].main,
                 description: data.weather[0].description,
                 icon: data.weather[0].icon,
@@ -134,23 +130,30 @@ setInterval(function(){
                 pressure: data.main.pressure,
                 humidity: data.main.humidity,
                 wind: data.wind.speed,
-                cloud: data.clouds.all,
-                time : new Date()
+                cloud: data.clouds.all
             };
 
             console.info("weather point: "+JSON.stringify(influxPoint));
 
-            influxClientWeather.writePoint("weather", influxPoint, null, function(err, response) {});
+            influxClientWeather.writePoints([{
+                measurement: 'weather',
+                fields: influxPoint
+            }]).catch(err => {
+                console.error(`Error saving data to InfluxDB! ${err.stack}`)
+            });
+
+            if (mqttClient.connected) {
+                mqttClient.publish('weather', JSON.stringify(influxPoint));
+            } else {
+                console.error('Not connected to MQTT broker');
+            }
         });
     } catch (e) {
         console.log(e);
     }
 }, config.openweathermap.interval);
 
-var lightUp = schedule.scheduleJob('30 7 * * *', function(){
-	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;3\n")
-});
-
-var lightDown = schedule.scheduleJob('0 9 * * *', function(){
+// shut down led
+schedule.scheduleJob('0 9 * * *', function(){
 	eventEmitter.emit('mysensors_send_message', "8;6;1;0;20;2\n")
 });
