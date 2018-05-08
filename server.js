@@ -106,7 +106,27 @@ eventEmitter.on('smartdom_send_current_state_sensors', () => {
     influxClient.query('select last(payloadFloat), time from V_WATT')
         .then(result => {
             mqttClient.publish('mysensors/1/4', JSON.stringify({payloadFloat:result[0].last}));
-        })
+        });
+    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 5 and nodeId = 4')
+        .then(result => {
+            mqttClient.publish('mysensors/4/5', JSON.stringify({payload:result[0].last}));
+        });
+    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 4 and nodeId = 4')
+        .then(result => {
+            mqttClient.publish('mysensors/4/4', JSON.stringify({payload:result[0].last}));
+        });
+    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 2 and nodeId = 8')
+        .then(result => {
+            mqttClient.publish('mysensors/8/2', JSON.stringify({payload:result[0].last}));
+        });
+    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 3 and nodeId = 8')
+        .then(result => {
+            mqttClient.publish('mysensors/8/3', JSON.stringify({payload:result[0].last}));
+        });
+    influxClientWeather.query('select last(description), temp from weather')
+        .then(result => {
+            mqttClient.publish('weather', JSON.stringify({description:result[0].last, temp:result[0].temp}));
+        });
 });
 
 // handle message from weather api =========================
