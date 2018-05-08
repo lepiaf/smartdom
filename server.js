@@ -107,19 +107,19 @@ eventEmitter.on('smartdom_send_current_state_sensors', () => {
         .then(result => {
             mqttClient.publish('mysensors/1/4', JSON.stringify({payloadFloat:result[0].last}));
         });
-    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 5 and nodeId = 4')
+    influxClient.query("select last(payload), time from V_TEMP WHERE childSensorId = '5' and nodeId = '4'")
         .then(result => {
             mqttClient.publish('mysensors/4/5', JSON.stringify({payload:result[0].last}));
         });
-    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 4 and nodeId = 4')
+    influxClient.query("select last(payload), time from V_HUM WHERE childSensorId = '4' and nodeId = '4'")
         .then(result => {
             mqttClient.publish('mysensors/4/4', JSON.stringify({payload:result[0].last}));
         });
-    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 2 and nodeId = 8')
+    influxClient.query("select last(payload), time from V_HUM WHERE childSensorId = '2' and nodeId = '8'")
         .then(result => {
             mqttClient.publish('mysensors/8/2', JSON.stringify({payload:result[0].last}));
         });
-    influxClient.query('select last(payload), time from V_TEMP WHERE childSensorId = 3 and nodeId = 8')
+    influxClient.query("select last(payload), time from V_TEMP WHERE childSensorId = '3' and nodeId = '8'")
         .then(result => {
             mqttClient.publish('mysensors/8/3', JSON.stringify({payload:result[0].last}));
         });
